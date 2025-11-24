@@ -12,6 +12,7 @@ interface EstadoCarrito {
   items: ItemCarrito[];
   agregar: (producto: Producto) => void;
   vaciar: () => void;
+  totalItems: number;
 }
 
 export const useCarrito = create<EstadoCarrito>((set, get) => ({
@@ -35,4 +36,7 @@ export const useCarrito = create<EstadoCarrito>((set, get) => ({
   },
 
   vaciar: () => set({ items: [] }),
+
+  // 👈 contador para el Header
+  totalItems: 0,
 }));

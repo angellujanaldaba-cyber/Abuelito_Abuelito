@@ -4,7 +4,7 @@
 import { useCarrito } from "@/store/carrito";
 
 export default function CarritoPage() {
-  const { items, vaciar } = useCarrito();
+  const { items, vaciar, incrementar, reducir, eliminar } = useCarrito();
 
   const total = items.reduce(
     (suma, item) => suma + item.precio * item.cantidad,
@@ -29,10 +29,35 @@ export default function CarritoPage() {
               >
                 <div>
                   <p className="font-semibold">{item.nombre}</p>
-                  <p className="text-sm text-slate-600">
-                    Cantidad: {item.cantidad}
-                  </p>
+
+                  {/* Controles de cantidad */}
+                  <div className="flex items-center gap-3 mt-2">
+                    <button
+                      onClick={() => reducir(item.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-full"
+                    >
+                      -
+                    </button>
+
+                    <span className="font-semibold">{item.cantidad}</span>
+
+                    <button
+                      onClick={() => incrementar(item.id)}
+                      className="px-3 py-1 bg-emerald-600 text-white rounded-full"
+                    >
+                      +
+                    </button>
+
+                    {/* 🔥 Botón eliminar separado */}
+                    <button
+                      onClick={() => eliminar(item.id)}
+                      className="ml-4 px-3 py-1 bg-slate-300 text-slate-800 rounded-full text-xs hover:bg-slate-400"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
+
                 <p className="font-bold text-emerald-700">
                   ${(item.precio * item.cantidad).toLocaleString("es-MX")}
                 </p>

@@ -1,4 +1,4 @@
-// data/productos.ts
+// src/data/productos.ts
 
 export type CategoriaProducto =
   | "Bodas"

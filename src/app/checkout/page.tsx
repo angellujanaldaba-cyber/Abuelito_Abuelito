@@ -13,8 +13,9 @@ type CheckoutForm = {
 
 export default function CheckoutPage() {
   // 🛒 Leemos el carrito desde Zustand
-  // Intentamos soportar nombres diferentes: items o productos
   const carrito = useCarrito((state: any) => state.items ?? state.productos ?? []);
+  // Si más adelante quieres vaciar el carrito desde aquí:
+  // const vaciarCarrito = useCarrito((state: any) => state.vaciarCarrito);
 
   const [form, setForm] = useState<CheckoutForm>({
     nombre: "",
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
 
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const total = carrito.reduce((acc: number, item: any) => {
     const precio = Number(item.precio) || 0;
@@ -39,24 +41,48 @@ export default function CheckoutPage() {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setEnviando(true);
     setMensaje(null);
+    setError(null);
 
-    // Por ahora solo mostramos los datos en consola
-    console.log("✅ Pedido enviado (simulado):", {
-      cliente: form,
-      carrito,
-      total,
-    });
+    try {
+        console.log("🛒 Carrito a enviar (completo):");
+        carrito.forEach((item, index) => {
+          console.log(`Producto ${index + 1}:`, JSON.stringify(item, null, 2));
+        });
+        
+      console.log("🧾 Datos del form:", form);
+      console.log("💰 Total:", total);
+      
+      const res = await fetch("/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          total,
+          items: carrito,
+        }),
+      });
 
-    setTimeout(() => {
+      if (!res.ok) {
+        throw new Error("No se pudo crear el pedido");
+      }
+
+      const data = await res.json();
+      console.log("✅ Pedido guardado en BD:", data);
+
+      setMensaje("Tu pedido ha sido registrado correctamente ✅");
+      // Si quieres, aquí luego:
+      // vaciarCarrito();
+      // router.push("/gracias");
+    } catch (err) {
+      console.error(err);
+      setError("Ocurrió un error al guardar tu pedido. Intenta de nuevo.");
+    } finally {
       setEnviando(false);
-      setMensaje("Tu pedido ha sido registrado (simulado). Luego lo conectamos a la base de datos 🤝");
-      // Aquí luego podrías limpiar el carrito o redirigir
-      // router.push("/gracias") por ejemplo
-    }, 600);
+    }
   };
 
   // Si no hay nada en el carrito
@@ -219,6 +245,12 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
+                {error && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                    {error}
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
                   <Link
                     href="/carrito"
@@ -253,11 +285,7 @@ export default function CheckoutPage() {
                     className="flex items-start gap-3 border-b border-slate-100 pb-3 last:border-0 last:pb-0"
                   >
                     {item.imagen && (
-                      // Si en algún momento usas next/image aquí lo puedes cambiar
-                      <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                        {/* Imagen decorativa */}
-                        {/* <Image src={item.imagen} alt={item.nombre} width={48} height={48} /> */}
-                      </div>
+                      <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0" />
                     )}
                     <div className="flex-1">
                       <p className="text-sm font-medium text-slate-900">
@@ -273,7 +301,9 @@ export default function CheckoutPage() {
                       </p>
                       <p className="text-xs text-slate-500">
                         Subtotal: $
-                        {((Number(item.precio) || 0) * (item.cantidad ?? 1)).toFixed(2)}
+                        {(
+                          (Number(item.precio) || 0) * (item.cantidad ?? 1)
+                        ).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -304,8 +334,9 @@ export default function CheckoutPage() {
               </div>
 
               <p className="text-xs text-slate-500 pt-1">
-                Este checkout todavía no guarda en base de datos. En el siguiente
-                paso conectamos esto con Prisma + PostgreSQL.
+                Este checkout ya envía tus datos a la API y los guarda en PostgreSQL
+                usando Prisma. Puedes ver los pedidos en las tablas <strong>Pedido</strong> y{" "}
+                <strong>PedidoItem</strong> desde pgAdmin.
               </p>
             </div>
           </aside>

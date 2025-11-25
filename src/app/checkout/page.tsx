@@ -62,7 +62,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           ...form,
           total,
-          items: carrito,
+          carrito,
         }),
       });
 
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
       const data = await res.json();
       console.log("✅ Pedido guardado en BD:", data);
 
-      setMensaje("Tu pedido ha sido registrado correctamente ✅");
+      setMensaje("Tu pedido ha sido generado correctamente, aparte de guapo eres una maquina de guerra ✅");
       // Si quieres, aquí luego:
       // vaciarCarrito();
       // router.push("/gracias");

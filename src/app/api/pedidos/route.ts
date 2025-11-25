@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
+    const data = await req.json();
 
-    const { nombre, telefono, direccion, comentarios, total, items } = body;
+    const { nombre, telefono, direccion, comentarios, carrito, total } = data;
+
+    if (!nombre || !telefono || !direccion || !carrito || carrito.length === 0) {
+      return NextResponse.json(
+        { error: "Datos incompletos" },
+        { status: 400 }
+      );
+    }
 
     const pedido = await prisma.pedido.create({
       data: {
@@ -15,19 +22,25 @@ export async function POST(request: Request) {
         comentarios,
         total,
         items: {
-          create: items.map((i: any) => ({
-            cantidad: i.cantidad,
-            precio: Number(i.precio),
-            productoId: i.id,
+          create: carrito.map((item: any) => ({
+            nombre: item.nombre,
+            precio: Number(item.precio),
+            cantidad: Number(item.cantidad),
+            imagenurl: item.imagenurl ?? null,
           })),
         },
       },
-      include: { items: true },
+      include: {
+        items: true,
+      },
     });
 
-    return NextResponse.json({ ok: true, pedido });
+    return NextResponse.json(pedido, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ ok: false, error: "Error creando pedido" }, { status: 500 });
+    console.error("Error creando pedido", error);
+    return NextResponse.json(
+      { error: "Error creando pedido" },
+      { status: 500 }
+    );
   }
 }

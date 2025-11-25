@@ -9,38 +9,32 @@ datasource db {
 }
 
 model Producto {
-  id          Int           @id @default(autoincrement())
-  nombre      String
-  descripcion String?
-  precio      Float
-  imagen      String?
-  pedidoItems PedidoItem[]
-
-  @@map("Producto")
+  idProducto   Int     @id @default(autoincrement())
+  nombre       String
+  precio       Int
+  descripcion  String?
+  imgproducto  String?
 }
 
 model Pedido {
-  id          Int           @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   nombre      String
   telefono    String
   direccion   String
   comentarios String?
-  total       Float
-  createdAt   DateTime      @default(now())
+  total       Int
+  createdAt   DateTime     @default(now())
   items       PedidoItem[]
-
-  @@map("Pedido")
 }
 
 model PedidoItem {
-  id         Int      @id @default(autoincrement())
-  cantidad   Int
-  precio     Float
-  productoId Int
-  pedidoId   Int
-
-  producto   Producto @relation(fields: [productoId], references: [id])
-  pedido     Pedido   @relation(fields: [pedidoId], references: [id])
+  id        Int     @id @default(autoincrement())
+  nombre    String
+  precio    Int
+  cantidad  Int
+  imagenurl String?
+  pedidoId  Int
+  pedido    Pedido  @relation(fields: [pedidoId], references: [id])
 
   @@map("PedidoItem")
 }

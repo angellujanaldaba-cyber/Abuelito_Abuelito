@@ -38,11 +38,17 @@ export function ProductCard({ producto }: { producto: Producto }) {
         </p>
 
         <button
-          onClick={() => agregar(producto)}
-          className="mt-2 rounded-full bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700 active:scale-95"
-        >
-          Agregar al carrito
-        </button>
+  onClick={() =>
+    agregar({
+      ...producto,
+      id: Number(producto.id),      // ← conversión clave
+      precio: Number(producto.precio),
+    })
+  }
+  className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+>
+  Agregar al carrito
+</button>
       </div>
     </article>
   );

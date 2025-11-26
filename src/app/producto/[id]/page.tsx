@@ -59,11 +59,17 @@ export default function ProductoPage() {
           <p className="text-2xl font-bold text-emerald-700">{precioMXN}</p>
 
           <button
-            onClick={() => agregar(producto)}
-            className="rounded-full bg-emerald-600 text-white px-6 py-3 text-sm font-semibold shadow-md hover:bg-emerald-700 active:scale-95"
-          >
-            Agregar al carrito
-          </button>
+  onClick={() =>
+    agregar({
+      ...producto,
+      id: Number(producto.id),      // ← CONVERSIÓN IMPORTANTE
+      precio: Number(producto.precio),
+    })
+  }
+  className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+>
+  Agregar al carrito
+</button>
         </div>
       </section>
     </main>

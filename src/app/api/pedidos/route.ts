@@ -35,8 +35,11 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(pedido, { status: 201 });
-  } catch (error) {
+    return NextResponse.json(
+        { id: pedido.id },
+        { status: 201 }
+      );
+        } catch (error) {
     console.error("Error creando pedido", error);
     return NextResponse.json(
       { error: "Error creando pedido" },

@@ -47,14 +47,15 @@ export default async function PedidoDetallePage({
       <section className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-4">Artículos comprados</h2>
 
-        {pedido.items.map((item) => (
-          <div key={item.id} className="border-b py-4">
-            <p className="text-lg font-semibold">{item.nombre}</p>
-            <p className="text-gray-700">
-              Precio: ${item.precio} — Cantidad: {item.cantidad}
-            </p>
-          </div>
-        ))}
+        {pedido.items.map((item: any) => (
+  <div key={item.id} className="border-b py-4">
+    <p className="text-lg font-semibold">{item.nombre}</p>
+    <p className="text-gray-700">
+      Precio: ${item.precio} — Cantidad: {item.cantidad}
+    </p>
+  </div>
+))}
+
 
         <h3 className="text-2xl font-bold text-right mt-6">
           Total: ${pedido.total}

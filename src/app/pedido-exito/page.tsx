@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function PedidoExitoPage() {
+export const dynamic = "force-dynamic";
+
+function PedidoContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -19,13 +22,12 @@ export default function PedidoExitoPage() {
 
       {id && (
         <p className="text-2xl font-bold mb-10">
-          Número de pedido: <span className="text-emerald-700">{id}</span>
+          Número de pedido:{" "}
+          <span className="text-emerald-700">{id}</span>
         </p>
       )}
 
       <div className="flex gap-4">
-
-        {/* Ver pedido */}
         {id && (
           <Link
             href={`/pedido/${id}`}
@@ -35,7 +37,6 @@ export default function PedidoExitoPage() {
           </Link>
         )}
 
-        {/* Volver al inicio */}
         <Link
           href="/"
           className="bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition"
@@ -44,5 +45,13 @@ export default function PedidoExitoPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function PedidoExitoPage() {
+  return (
+    <Suspense fallback={<p>Cargando...</p>}>
+      <PedidoContent />
+    </Suspense>
   );
 }

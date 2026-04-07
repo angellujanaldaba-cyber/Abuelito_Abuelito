@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Deploy to AWS ECS
 
 on:
   push:
@@ -13,35 +13,29 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Configurar AWS credentials
+      - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Login a ECR
+      - name: Login a Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build y push Docker image
+      - name: Build y push de la imagen
         run: |
           docker buildx build \
             --platform linux/amd64 \
             -t 455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:latest \
             --push .
 
-      - name: Deploy en EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 455982475279.dkr.ecr.us-east-1.amazonaws.com
-            docker pull 455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:latest
-            docker rm -f abuelito || true
-            docker run -d --name abuelito -p 3000:3000 455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:latest
-
+      - name: Forzar nuevo deployment en ECS
+        run: |
+          aws ecs update-service \
+            --cluster abuelito-cluster2 \
+            --service abuelito-service \
+            --force-new-deployment

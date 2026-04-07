@@ -44,6 +44,4 @@ jobs:
             docker pull 455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:latest
             docker rm -f abuelito || true
             docker run -d --name abuelito -p 3000:3000 455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:latest
-exit
-cd exit
-eof
+

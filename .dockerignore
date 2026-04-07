@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env
+.env.*
+Dockerfile*
+README*
+npm-debug.log*
+docker-hola

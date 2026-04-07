@@ -1,54 +1,36 @@
-# ==========================
-# 1. DEPS STAGE
-# ==========================
-FROM node:20-slim AS deps
-WORKDIR /app
-
-# Copiar package.json y lock
-COPY package*.json ./
-COPY prisma ./prisma
-
-# Instalar dependencias
-RUN npm install
-
-# Generar cliente Prisma
-RUN npx prisma generate
-
-
-# ==========================
-# 2. BUILDER STAGE
-# ==========================
-FROM node:20-slim AS builder
-WORKDIR /app
-
-# Copiamos el resto del código
-COPY . .
-
-# Copiamos node_modules desde deps
-COPY --from=deps /app/node_modules ./node_modules
-
-# Construimos Next.js
-RUN npm run build
-
-
-# ==========================
-# 3. RUNNER STAGE (PRODUCCIÓN)
-# ==========================
-FROM node:20-slim AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copiamos la salida standalone de Next.js
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Copiamos public
-COPY --from=builder /app/public ./public
-
-# Puerto donde correrá Next.js en ECS
-EXPOSE 3000
-
-# Comando de arranque
-CMD ["node", "server.js"]
-
+# ---------- deps ----------
+    FROM node:20-alpine AS deps
+    WORKDIR /app
+    
+    # Si usas npm:
+     COPY package.json package-lock.json* ./
+     COPY prisma ./prisma
+     RUN npm ci
+    
+    
+    # ---------- builder ----------
+    FROM node:20-alpine AS builder
+    WORKDIR /app
+    COPY --from=deps /app/node_modules ./node_modules
+    COPY . .
+    
+    # Build de Next (genera .next/standalone si tienes output:"standalone")
+    RUN npm run build
+    
+    # ---------- runner ----------
+    FROM node:20-alpine AS runner
+    WORKDIR /app
+    ENV NODE_ENV=production
+    ENV PORT=3000
+    ENV HOSTNAME=0.0.0.0
+    
+    # Copiamos el servidor standalone y estáticos
+    COPY --from=builder /app/public ./public
+    COPY --from=builder /app/.next/static ./.next/static
+    COPY --from=builder /app/.next/standalone ./
+    
+    EXPOSE 3000
+    
+    # El standalone trae server.js en la raíz del contenido copiado
+    CMD ["node", "server.js"]
+    

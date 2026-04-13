@@ -36,46 +36,43 @@ jobs:
           docker build --build-arg APP_VERSION=$TAG -t $IMAGE_URI:$TAG .
           docker push $IMAGE_URI:$TAG
 
-      # 🔥 Obtener task definition actual
       - name: Get current task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition AbuelitodevabuelitodevserviceTaskDef2D84DB80
+            --task-definition AbuelitodevabuelitodevserviceTaskDef2D84DB80 \
+            --region us-east-1 \
             > task-definition.json
 
-      # 🔥 Reemplazar imagen con el nuevo SHA
       - name: Update task definition image
         run: |
           IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:${{ github.sha }}
 
           cat task-definition.json \
-| jq '.taskDefinition' \
-| jq '.containerDefinitions[0].image = "'$IMAGE_URI'"' \
-| jq 'del(
-    .taskDefinitionArn,
-    .revision,
-    .status,
-    .requiresAttributes,
-    .compatibilities,
-    .registeredAt,
-    .registeredBy
-  )' \
-> new-task-definition.json
+            | jq '.taskDefinition' \
+            | jq '.containerDefinitions[0].image = "'$IMAGE_URI'"' \
+            | jq 'del(
+                .taskDefinitionArn,
+                .revision,
+                .status,
+                .requiresAttributes,
+                .compatibilities,
+                .registeredAt,
+                .registeredBy
+              )' \
+            > new-task-definition.json
 
-      # 🔥 Registrar nueva task definition
       - name: Register new task definition
         run: |
           aws ecs register-task-definition \
             --cli-input-json file://new-task-definition.json \
+            --region us-east-1 \
             > task-output.json
 
-      # 🔥 Obtener ARN de la nueva task definition
       - name: Get new task definition ARN
         run: |
-          TASK_DEF_ARN=$(cat task-output.json | jq -r '.taskDefinition.taskDefinitionArn')
+          TASK_DEF_ARN=$(jq -r '.taskDefinition.taskDefinitionArn' task-output.json)
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
 
-      # 🔥 Actualizar servicio ECS
       - name: Update ECS service
         run: |
           aws ecs update-service \

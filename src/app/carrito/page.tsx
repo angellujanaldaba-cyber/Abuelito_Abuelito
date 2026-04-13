@@ -16,7 +16,7 @@ export default function CarritoPage() {
       <h1 className="text-3xl font-bold mb-6">Carrito Miguel</h1>
 
       {items.length === 0 && (
-        <p className="text-lg text-slate-500">Miguel Tu carrito está vacío.</p>
+        <p className="text-lg text-slate-500">Miguel Tu carrito está vacío compra algo.</p>
       )}
 
       {items.length > 0 && (

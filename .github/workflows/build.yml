@@ -39,7 +39,7 @@ jobs:
           IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web
           TAG=${{ github.sha }}
 
-          docker build -t $IMAGE_URI:$TAG .
+          docker build --build-arg APP_VERSION=$TAG -t $IMAGE_URI:$TAG .
           docker push $IMAGE_URI:$TAG
 
           docker tag $IMAGE_URI:$TAG $IMAGE_URI:latest

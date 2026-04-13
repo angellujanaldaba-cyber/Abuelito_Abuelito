@@ -40,7 +40,7 @@ jobs:
       - name: Get current task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition abuelito-dev-service \
+            --task-definition AbuelitodevabuelitodevserviceTaskDef2D84DB80
             > task-definition.json
 
       # 🔥 Reemplazar imagen con el nuevo SHA

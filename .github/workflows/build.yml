@@ -31,6 +31,9 @@ jobs:
           aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 455982475279.dkr.ecr.us-east-1.amazonaws.com
 
+      - name: Show image tag
+        run: echo "Image tag is ${{ github.sha }}"
+
       - name: Build and push image
         run: |
           IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web

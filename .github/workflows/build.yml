@@ -1,4 +1,4 @@
-name: Build and Push to ECR
+name: Build, Push and Deploy to ECS
 
 on:
   push:
@@ -10,15 +10,12 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -31,9 +28,6 @@ jobs:
           aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 455982475279.dkr.ecr.us-east-1.amazonaws.com
 
-      - name: Show image tag
-        run: echo "Image tag is ${{ github.sha }}"
-
       - name: Build and push image
         run: |
           IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web
@@ -42,5 +36,47 @@ jobs:
           docker build --build-arg APP_VERSION=$TAG -t $IMAGE_URI:$TAG .
           docker push $IMAGE_URI:$TAG
 
-          docker tag $IMAGE_URI:$TAG $IMAGE_URI:latest
-          docker push $IMAGE_URI:latest
+      # 🔥 Obtener task definition actual
+      - name: Get current task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition abuelito-dev-service \
+            > task-definition.json
+
+      # 🔥 Reemplazar imagen con el nuevo SHA
+      - name: Update task definition image
+        run: |
+          IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:${{ github.sha }}
+
+          cat task-definition.json \
+          | jq '.taskDefinition.containerDefinitions[0].image = "'$IMAGE_URI'"' \
+          | jq 'del(.taskDefinition.taskDefinitionArn,
+                    .taskDefinition.revision,
+                    .taskDefinition.status,
+                    .taskDefinition.requiresAttributes,
+                    .taskDefinition.compatibilities,
+                    .taskDefinition.registeredAt,
+                    .taskDefinition.registeredBy)' \
+          > new-task-definition.json
+
+      # 🔥 Registrar nueva task definition
+      - name: Register new task definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://new-task-definition.json \
+            > task-output.json
+
+      # 🔥 Obtener ARN de la nueva task definition
+      - name: Get new task definition ARN
+        run: |
+          TASK_DEF_ARN=$(cat task-output.json | jq -r '.taskDefinition.taskDefinitionArn')
+          echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+
+      # 🔥 Actualizar servicio ECS
+      - name: Update ECS service
+        run: |
+          aws ecs update-service \
+            --cluster abuelito-dev-cluster \
+            --service abuelito-dev-service \
+            --task-definition $TASK_DEF_ARN \
+            --region us-east-1

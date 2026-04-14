@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -13,6 +14,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPOSITORY: abuelito-web
+      CFN_STACK_NAME: Abuelito-dev
+      TASK_DEFINITION_FAMILY: AbuelitodevabuelitodevserviceTaskDef2D84DB80
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,32 +27,52 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
           role-to-assume: arn:aws:iam::455982475279:role/github-actions-abuelito-app
 
       - name: Login to ECR
         run: |
-          aws ecr get-login-password --region us-east-1 \
+          aws ecr get-login-password --region "$AWS_REGION" \
           | docker login --username AWS --password-stdin 455982475279.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Build and push image
         run: |
-          IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web
+          IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/$ECR_REPOSITORY
           TAG=${{ github.sha }}
 
           docker build --build-arg APP_VERSION=$TAG -t $IMAGE_URI:$TAG .
           docker push $IMAGE_URI:$TAG
 
+      - name: Get ECS outputs from CloudFormation
+        run: |
+          ECS_CLUSTER=$(aws cloudformation describe-stacks \
+            --stack-name "$CFN_STACK_NAME" \
+            --region "$AWS_REGION" \
+            --query "Stacks[0].Outputs[?OutputKey=='abuelitodevclusternameoutput'].OutputValue" \
+            --output text)
+
+          ECS_SERVICE=$(aws cloudformation describe-stacks \
+            --stack-name "$CFN_STACK_NAME" \
+            --region "$AWS_REGION" \
+            --query "Stacks[0].Outputs[?OutputKey=='abuelitodevservicenameoutput'].OutputValue" \
+            --output text)
+
+          echo "ECS_CLUSTER=$ECS_CLUSTER" >> $GITHUB_ENV
+          echo "ECS_SERVICE=$ECS_SERVICE" >> $GITHUB_ENV
+
+          echo "Cluster: $ECS_CLUSTER"
+          echo "Service: $ECS_SERVICE"
+
       - name: Get current task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition AbuelitodevabuelitodevserviceTaskDef2D84DB80 \
-            --region us-east-1 \
+            --task-definition "$TASK_DEFINITION_FAMILY" \
+            --region "$AWS_REGION" \
             > task-definition.json
 
       - name: Update task definition image
         run: |
-          IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-web:${{ github.sha }}
+          IMAGE_URI=455982475279.dkr.ecr.us-east-1.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
 
           cat task-definition.json \
             | jq '.taskDefinition' \
@@ -65,18 +92,20 @@ jobs:
         run: |
           aws ecs register-task-definition \
             --cli-input-json file://new-task-definition.json \
-            --region us-east-1 \
+            --region "$AWS_REGION" \
             > task-output.json
 
       - name: Get new task definition ARN
         run: |
           TASK_DEF_ARN=$(jq -r '.taskDefinition.taskDefinitionArn' task-output.json)
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+          echo "Task definition ARN: $TASK_DEF_ARN"
 
       - name: Update ECS service
         run: |
           aws ecs update-service \
-            --cluster Abuelito-dev-abuelitodevclusterD07349EB-57OE84fY1xBD \
-            --service Abuelito-dev-abuelitodevserviceService26945F8E-FIksahae8gzy \
-            --task-definition $TASK_DEF_ARN \
-            --region us-east-1
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_DEF_ARN" \
+            --force-new-deployment \
+            --region "$AWS_REGION"

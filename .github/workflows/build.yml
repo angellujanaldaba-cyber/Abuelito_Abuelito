@@ -18,7 +18,6 @@ jobs:
       AWS_REGION: us-east-1
       ECR_REPOSITORY: abuelito-web
       CFN_STACK_NAME: Abuelito-dev
-      TASK_DEFINITION_FAMILY: AbuelitodevabuelitodevserviceTaskDef2D84DB80
 
     steps:
       - name: Checkout
@@ -63,10 +62,22 @@ jobs:
           echo "Cluster: $ECS_CLUSTER"
           echo "Service: $ECS_SERVICE"
 
-      - name: Get current task definition
+      - name: Get current task definition from ECS service
+        run: |
+          TASK_DEF=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --region "$AWS_REGION" \
+            --query "services[0].taskDefinition" \
+            --output text)
+
+          echo "TASK_DEF=$TASK_DEF" >> $GITHUB_ENV
+          echo "Current task definition: $TASK_DEF"
+
+      - name: Get current task definition JSON
         run: |
           aws ecs describe-task-definition \
-            --task-definition "$TASK_DEFINITION_FAMILY" \
+            --task-definition "$TASK_DEF" \
             --region "$AWS_REGION" \
             > task-definition.json
 

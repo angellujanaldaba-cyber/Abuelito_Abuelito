@@ -13,10 +13,10 @@ export default function CarritoPage() {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <h1 className="text-3xl font-bold mb-6">Alex Carrito pipeline funcionando14426</h1>
+      <h1 className="text-3xl font-bold mb-6">Alexa Carrito pipeline funcionando14426</h1>
 
       {items.length === 0 && (
-        <p className="text-lg text-slate-500">Alex Tu carrito está vacío pipeline funcionando14426.</p>
+        <p className="text-lg text-slate-500">Alexa Tu carrito está vacío pipeline funcionando14426.</p>
       )}
 
       {items.length > 0 && (

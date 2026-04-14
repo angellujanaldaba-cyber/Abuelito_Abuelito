@@ -76,7 +76,7 @@ jobs:
       - name: Update ECS service
         run: |
           aws ecs update-service \
-            --cluster Abuelito-dev-abuelitodevclusterD07349EB-3dvnf8KoLXEG \
-            --service Abuelito-dev-abuelitodevserviceService26945F8E-Le5lcCFT2tce \
+            --cluster Abuelito-dev-abuelitodevclusterD07349EB-57OE84fY1xBD \
+            --service Abuelito-dev-abuelitodevserviceService26945F8E-FIksahae8gzy \
             --task-definition $TASK_DEF_ARN \
             --region us-east-1

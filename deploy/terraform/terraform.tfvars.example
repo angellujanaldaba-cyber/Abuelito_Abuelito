@@ -1,0 +1,3 @@
+# Copiar a terraform.tfvars y reemplazar ambos valores.
+admin_cidrs        = ["203.0.113.10/32"]
+admin_principal_arn = "arn:aws:iam::123456789012:user/REEMPLAZAR"

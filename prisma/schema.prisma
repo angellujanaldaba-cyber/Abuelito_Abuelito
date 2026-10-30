@@ -9,11 +9,11 @@ datasource db {
 }
 
 model Producto {
-  idProducto   Int     @id @default(autoincrement())
-  nombre       String
-  precio       Int
-  descripcion  String?
-  imgproducto  String?
+  idProducto  Int     @id @default(autoincrement())
+  nombre      String
+  precio      Int
+  descripcion String?
+  imgproducto String?
 }
 
 model Pedido {
@@ -37,4 +37,71 @@ model PedidoItem {
   pedido    Pedido  @relation(fields: [pedidoId], references: [id])
 
   @@map("PedidoItem")
+}
+
+enum RetailDocumentType {
+  SALE
+  RETURN
+  TRANSFER
+  WASTE
+  OWNER_WITHDRAWAL
+  SUPPLIER_RETURN
+  INVENTORY_ADJUSTMENT
+}
+
+enum RetailEventStatus {
+  OK
+  ALERT
+}
+
+enum RetailAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model RetailDocument {
+  id        String             @id @default(cuid())
+  type      RetailDocumentType
+  reference String?
+  amount    Float?
+  notes     String?
+  createdAt DateTime           @default(now())
+
+  exitEvents ExitEvent[]
+
+  @@index([createdAt])
+  @@map("retail_documents")
+}
+
+model ExitEvent {
+  id                String            @id @default(cuid())
+  eventType         String
+  cameraId          String
+  detectedAt        DateTime          @default(now())
+  evidenceUrl       String?
+  status            RetailEventStatus
+  matchedDocumentId String?
+
+  matchedDocument RetailDocument? @relation(fields: [matchedDocumentId], references: [id])
+  alerts          RetailAlert[]
+
+  @@index([detectedAt])
+  @@index([status])
+  @@map("exit_events")
+}
+
+model RetailAlert {
+  id        String              @id @default(cuid())
+  eventId   String
+  severity  RetailAlertSeverity
+  message   String
+  sentAt    DateTime?
+  createdAt DateTime            @default(now())
+
+  event ExitEvent @relation(fields: [eventId], references: [id])
+
+  @@index([createdAt])
+  @@map("retail_alerts")
 }

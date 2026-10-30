@@ -41,3 +41,28 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Local data and deployment credentials
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform.tfvars
+*.auto.tfvars
+*.tfvars.json
+!*.tfvars.example.json
+.private/
+backups/
+*.dump
+*.tar
+*.tar.gz
+venv*/
+*.pt
+public/evidence/
+migrator-task.json
+.env*
+crash.log
+
+__pycache__/
+*.pyc
+src/app/retailguard/Untitled

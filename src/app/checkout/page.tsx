@@ -18,6 +18,8 @@ export default function CheckoutPage() {
   const [enviando] = useState(false);
 
   const carrito = useCarrito((state) => state.items);
+  const vaciar = useCarrito((state) => state.vaciar);
+
   const total = carrito.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0
@@ -54,6 +56,7 @@ export default function CheckoutPage() {
 
       console.log("Pedido guardado:", pedidoCreado);
 
+      vaciar();
       // redirigir a pedido-exito
       router.push(`/pedido-exito?id=${pedidoCreado.id}`);
       return;

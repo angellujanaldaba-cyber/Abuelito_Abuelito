@@ -1,6 +1,6 @@
 // src/app/carrito/page.tsx
 "use client";
-
+import Link from "next/link";
 import { useCarrito } from "@/store/carrito";
 
 export default function CarritoPage() {
@@ -75,6 +75,9 @@ export default function CarritoPage() {
             >
               Vaciar carrito
             </button>
+            <Link
+            href="/checkout"
+           className="rounded-full bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 active:scale-95  ">Finalizar compra</Link>
           </div>
         </>
       )}

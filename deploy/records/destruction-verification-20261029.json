@@ -1,0 +1,22 @@
+{
+  "snapshot": [
+    {
+      "name": "abuelito-eks-final-20261029",
+      "status": "available",
+      "engine": "postgres",
+      "version": "16.15",
+      "storage": 20,
+      "arn": "arn:aws:rds:us-east-1:455982475279:snapshot:abuelito-eks-final-20261029"
+    }
+  ],
+  "vpcs": [],
+  "instances": [],
+  "nat_gateways_active": [],
+  "eips": [],
+  "eks": [],
+  "rds": [],
+  "alb": [],
+  "ecr": [],
+  "container_logs": [],
+  "terraform_managed_count": 0
+}

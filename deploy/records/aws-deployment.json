@@ -1,0 +1,54 @@
+{
+  "environment": "aws-dev",
+  "account": "455982475279",
+  "region": "us-east-1",
+  "cluster": "abuelito-eks",
+  "namespace": "abuelito",
+  "source_test": "abuelito-prueba-001",
+  "images": {
+    "web": {
+      "local_id": "sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb",
+      "tag": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web:web-local001-20261029",
+      "uri": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb"
+    },
+    "migrator": {
+      "local_id": "sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2",
+      "tag": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web:migrator-local001-20261029",
+      "uri": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2"
+    }
+  },
+  "database_host": "abuelito-eks-db.caxyy48u4z9b.us-east-1.rds.amazonaws.com",
+  "database_name": "abuelito",
+  "application_database_user": "abuelito_app",
+  "migration_job": "abuelito-migrate-20261029",
+  "functional_tests": "passed: user created and viewed orders 1 and 2 through localhost:3108 on 2026-10-29",
+  "dns_changed": true,
+  "manual_test_url": "http://localhost:3108/catalogo",
+  "alb_dns": "abuelito-eks-1987555837.us-east-1.elb.amazonaws.com",
+  "replicas_ready": 0,
+  "zones": [
+    "us-east-1a",
+    "us-east-1b"
+  ],
+  "alb_targets": "deleted",
+  "status": "destroyed_snapshot_retained",
+  "manual_acceptance": {
+    "date": "2026-10-29",
+    "order_ids": [
+      1,
+      2
+    ],
+    "source": "User screenshots and confirmation",
+    "environment": "EKS and RDS via port-forward 3108"
+  },
+  "public_url": "https://dev.miguelinfra.com",
+  "domain_validation": {
+    "date": "2026-10-29",
+    "source": "User screenshot of dev.miguelinfra.com/pedido/3",
+    "order_id": 3,
+    "dns_change_actor": "user"
+  },
+  "current_availability": "AWS application offline; old addresses historical",
+  "destruction_record": "release/destruction-20261029.json",
+  "dns_status": "Cloudflare CNAME unchanged, points to deleted ALB"
+}

@@ -1,0 +1,50 @@
+{
+  "test_id": "abuelito-prueba-001",
+  "created_date": "2026-10-29",
+  "url": "http://localhost:3107",
+  "compose_file": "local/compose.yaml",
+  "web_image_id": "sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb",
+  "web_rebuilt": false,
+  "database": {
+    "service": "db",
+    "name": "abuelito",
+    "image_reference": "postgres:16-alpine",
+    "volume": "abuelito-prueba-001_datos",
+    "network": "abuelito-prueba-001_default",
+    "public_port": null
+  },
+  "migration_source": "/Users/miguel/Documents/abuelito-abuelito/prisma",
+  "migration_image_tag": "abuelito-prueba-001-migrator:20261029",
+  "migration_manifest": "sha256:54893f0edcd6e6fdc191021e787045b3fc2a73af699d8076664ba557918c3768",
+  "files_sha256": {
+    "prisma/schema.prisma": "394dd9d67c607e45be1f9098d66458bb8188865ad27a5cccde7e5c4f4015aeb0",
+    "prisma/migrations/20251124192018_init_models/migration.sql": "928386a7a3a53125e11457844fdfbd7eae81bb5a43b9162eae06602d21458fb4",
+    "prisma/migrations/20251125014541_fix_models/migration.sql": "ed219c360dff36dbb57b03a897c54bf25d3e4dc3ea3664cb0f2fbae06c7aee0d",
+    "prisma/migrations/20251125175711_init_pedidos/migration.sql": "393fbabf09197ebe453fae02453b9a086e60155fa1ef0fe1cbaaea70fdbf30ca",
+    "prisma/migrations/20251126063834_add_usuario_relacion/migration.sql": "e450c52c98d55f7d918b31acdd38782552bac28387380d43af3a9a35f63345d6",
+    "prisma/migrations/20260428165508_add_retailguard_ai/migration.sql": "7e4fe8952bd99348aa571da53dd5f7c780403cf3f98b82aaf5d99370d3470624"
+  },
+  "applied_migrations": [
+    "20251124192018_init_models",
+    "20251125014541_fix_models",
+    "20251125175711_init_pedidos",
+    "20251126063834_add_usuario_relacion",
+    "20260428165508_add_retailguard_ai"
+  ],
+  "results": {
+    "migrations": "passed: five applied",
+    "database_healthcheck": "healthy",
+    "web_container": "started",
+    "create_order": "passed: manual user confirmation, order 1",
+    "persist_order": "passed: user opened /pedido/1; restart persistence not tested",
+    "user_acceptance": "confirmed by user 2026-10-29: create and view order",
+    "restart_persistence": "not_tested"
+  },
+  "credential_location": "local/.env (excluded from Git, permissions 600)",
+  "manual_evidence": {
+    "date": "2026-10-29",
+    "path": "http://localhost:3107/pedido/1",
+    "order_id": 1,
+    "source": "Screenshot and user confirmation in chat; no automated functional tests performed"
+  }
+}

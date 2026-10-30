@@ -34,3 +34,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Despliegue EKS y pipelines
+
+La infraestructura vive en [deploy/terraform](deploy/terraform), los manifests en [deploy/kubernetes](deploy/kubernetes) y los registros historicos en [deploy/records](deploy/records).
+
+Leer [docs/deployment/PIPELINES.md](docs/deployment/PIPELINES.md) para configurar GitHub Actions, OIDC, backend remoto y ejecutor privado. Push ejecuta solo compilacion/validacion; construir imagenes, Terraform y deploy son manuales. Las pruebas funcionales las realiza el usuario.
+
+El laboratorio AWS del 29 de octubre de 2026 fue destruido. La imagen historica validada esta registrada por digest; este codigo versionado no implica que un build nuevo sea identico a esa imagen. Los respaldos Docker y los datos privados permanecen fuera de Git. El script YOLO es una herramienta local separada; los pesos, entorno Python y evidencias generadas no se versionan aqui ni se ejecutan en los pipelines web.

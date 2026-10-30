@@ -1,0 +1,31 @@
+{
+  "status": "completed",
+  "authorization": "User: el snapshot dejalo, igual no estorba, sigamos",
+  "backups_verified": true,
+  "backup_report": "backups/respaldo-20261029.json",
+  "images_archive": "backups/abuelito-imagenes-20261029.tar",
+  "files_archive": "backups/abuelito-archivos-20261029.tar.gz",
+  "rejected_action": "terraform plan preparing RDS skip_final_snapshot change",
+  "aws_resources_deleted": true,
+  "local_configuration_change": "db_skip_final_snapshot=false; final snapshot retained as explicitly requested",
+  "costs_continue": "retained RDS snapshot storage only for the verified remaining project resource",
+  "snapshot_retained": true,
+  "final_snapshot_identifier": "abuelito-eks-final-20261029",
+  "destroy_plan": {
+    "create": 0,
+    "update": 0,
+    "delete": 61
+  },
+  "terraform_destroyed_count": 61,
+  "terraform_managed_count": 0,
+  "verification": "release/destruction-verification-20261029.json",
+  "snapshot": {
+    "name": "abuelito-eks-final-20261029",
+    "status": "available",
+    "engine": "postgres",
+    "version": "16.15",
+    "storage": 20,
+    "arn": "arn:aws:rds:us-east-1:455982475279:snapshot:abuelito-eks-final-20261029"
+  },
+  "completed_date": "2026-10-29"
+}

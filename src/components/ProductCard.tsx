@@ -14,6 +14,7 @@ export function ProductCard({ producto }: { producto: Producto }) {
       <Link href={`/producto/${producto.id}`}>
         <div className="relative h-48 w-full overflow-hidden">
           <Image
+          unoptimized
             src={producto.imagenUrl}
             alt={producto.nombre}
             fill

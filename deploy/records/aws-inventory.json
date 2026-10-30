@@ -1,0 +1,601 @@
+{
+  "account": "455982475279",
+  "region": "us-east-1",
+  "source": "terraform state snapshot 2026-10-29; selected non-secret fields only",
+  "resources": [
+    {
+      "type": "aws_autoscaling_attachment",
+      "terraform_name": "app",
+      "index": "a",
+      "attributes": {
+        "id": "eks-abuelito-eks-a-fad0c426-545c-2013-f8a1-26d122b7395b-20261029153716351500000001"
+      }
+    },
+    {
+      "type": "aws_autoscaling_attachment",
+      "terraform_name": "app",
+      "index": "b",
+      "attributes": {
+        "id": "eks-abuelito-eks-b-22d0c426-545c-61bd-d0a1-4f1f9ff34bd1-20261029153716376700000002"
+      }
+    },
+    {
+      "type": "aws_cloudwatch_dashboard",
+      "terraform_name": "main",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks"
+      }
+    },
+    {
+      "type": "aws_cloudwatch_log_group",
+      "terraform_name": "containers",
+      "index": "application",
+      "attributes": {
+        "id": "/aws/containerinsights/abuelito-eks/application",
+        "name": "/aws/containerinsights/abuelito-eks/application",
+        "arn": "arn:aws:logs:us-east-1:455982475279:log-group:/aws/containerinsights/abuelito-eks/application",
+        "retention_in_days": 7
+      }
+    },
+    {
+      "type": "aws_cloudwatch_log_group",
+      "terraform_name": "containers",
+      "index": "dataplane",
+      "attributes": {
+        "id": "/aws/containerinsights/abuelito-eks/dataplane",
+        "name": "/aws/containerinsights/abuelito-eks/dataplane",
+        "arn": "arn:aws:logs:us-east-1:455982475279:log-group:/aws/containerinsights/abuelito-eks/dataplane",
+        "retention_in_days": 7
+      }
+    },
+    {
+      "type": "aws_cloudwatch_log_group",
+      "terraform_name": "containers",
+      "index": "host",
+      "attributes": {
+        "id": "/aws/containerinsights/abuelito-eks/host",
+        "name": "/aws/containerinsights/abuelito-eks/host",
+        "arn": "arn:aws:logs:us-east-1:455982475279:log-group:/aws/containerinsights/abuelito-eks/host",
+        "retention_in_days": 7
+      }
+    },
+    {
+      "type": "aws_cloudwatch_log_group",
+      "terraform_name": "control_plane",
+      "index": null,
+      "attributes": {
+        "id": "/aws/eks/abuelito-eks/cluster",
+        "name": "/aws/eks/abuelito-eks/cluster",
+        "arn": "arn:aws:logs:us-east-1:455982475279:log-group:/aws/eks/abuelito-eks/cluster",
+        "retention_in_days": 7
+      }
+    },
+    {
+      "type": "aws_cloudwatch_log_group",
+      "terraform_name": "database",
+      "index": null,
+      "attributes": {
+        "id": "/aws/rds/instance/abuelito-eks-db/postgresql",
+        "name": "/aws/rds/instance/abuelito-eks-db/postgresql",
+        "arn": "arn:aws:logs:us-east-1:455982475279:log-group:/aws/rds/instance/abuelito-eks-db/postgresql",
+        "retention_in_days": 7
+      }
+    },
+    {
+      "type": "aws_cloudwatch_metric_alarm",
+      "terraform_name": "alb_errors",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-errores-alb",
+        "arn": "arn:aws:cloudwatch:us-east-1:455982475279:alarm:abuelito-eks-errores-alb"
+      }
+    },
+    {
+      "type": "aws_cloudwatch_metric_alarm",
+      "terraform_name": "database_storage",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-db-poco-espacio",
+        "arn": "arn:aws:cloudwatch:us-east-1:455982475279:alarm:abuelito-eks-db-poco-espacio"
+      }
+    },
+    {
+      "type": "aws_cloudwatch_metric_alarm",
+      "terraform_name": "no_healthy_targets",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-sin-destinos-sanos",
+        "arn": "arn:aws:cloudwatch:us-east-1:455982475279:alarm:abuelito-eks-sin-destinos-sanos"
+      }
+    },
+    {
+      "type": "aws_db_instance",
+      "terraform_name": "app",
+      "index": null,
+      "attributes": {
+        "id": "db-VRANW7J6X6YA2WYUUQ5EVR4XRY",
+        "identifier": "abuelito-eks-db",
+        "arn": "arn:aws:rds:us-east-1:455982475279:db:abuelito-eks-db",
+        "engine": "postgres",
+        "engine_version": "16.15",
+        "instance_class": "db.t4g.micro",
+        "allocated_storage": 20,
+        "multi_az": true,
+        "publicly_accessible": false,
+        "db_name": "abuelito"
+      }
+    },
+    {
+      "type": "aws_db_subnet_group",
+      "terraform_name": "app",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-db",
+        "name": "abuelito-eks-db",
+        "arn": "arn:aws:rds:us-east-1:455982475279:subgrp:abuelito-eks-db",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_ecr_repository",
+      "terraform_name": "app",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-web",
+        "name": "abuelito-eks-web",
+        "arn": "arn:aws:ecr:us-east-1:455982475279:repository/abuelito-eks-web"
+      }
+    },
+    {
+      "type": "aws_eip",
+      "terraform_name": "nat",
+      "index": "a",
+      "attributes": {
+        "id": "eipalloc-06c9dc868138dc2bc",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:elastic-ip/eipalloc-06c9dc868138dc2bc"
+      }
+    },
+    {
+      "type": "aws_eip",
+      "terraform_name": "nat",
+      "index": "b",
+      "attributes": {
+        "id": "eipalloc-0ccb6360b6873f407",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:elastic-ip/eipalloc-0ccb6360b6873f407"
+      }
+    },
+    {
+      "type": "aws_eks_access_entry",
+      "terraform_name": "admin",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks:arn:aws:iam::455982475279:user/abuelito-dev"
+      }
+    },
+    {
+      "type": "aws_eks_access_policy_association",
+      "terraform_name": "admin",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks#arn:aws:iam::455982475279:user/abuelito-dev#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      }
+    },
+    {
+      "type": "aws_eks_addon",
+      "terraform_name": "cloudwatch",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks:amazon-cloudwatch-observability",
+        "arn": "arn:aws:eks:us-east-1:455982475279:addon/abuelito-eks/amazon-cloudwatch-observability/72d0c427-a651-a92c-9ecb-fe5c3e107819",
+        "addon_version": "v7.0.0-eksbuild.1"
+      }
+    },
+    {
+      "type": "aws_eks_addon",
+      "terraform_name": "pod_identity",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks:eks-pod-identity-agent",
+        "arn": "arn:aws:eks:us-east-1:455982475279:addon/abuelito-eks/eks-pod-identity-agent/c0d0c427-7553-7f3f-f542-c88c372f1da3",
+        "addon_version": "v1.4.1-eksbuild.3"
+      }
+    },
+    {
+      "type": "aws_eks_cluster",
+      "terraform_name": "main",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks",
+        "name": "abuelito-eks",
+        "arn": "arn:aws:eks:us-east-1:455982475279:cluster/abuelito-eks",
+        "version": "1.37"
+      }
+    },
+    {
+      "type": "aws_eks_node_group",
+      "terraform_name": "main",
+      "index": "a",
+      "attributes": {
+        "id": "abuelito-eks:abuelito-eks-a",
+        "arn": "arn:aws:eks:us-east-1:455982475279:nodegroup/abuelito-eks/abuelito-eks-a/fad0c426-545c-2013-f8a1-26d122b7395b",
+        "version": "1.37",
+        "instance_types": [
+          "t4g.small"
+        ],
+        "ami_type": "AL2023_ARM_64_STANDARD",
+        "capacity_type": "ON_DEMAND",
+        "disk_size": 20
+      }
+    },
+    {
+      "type": "aws_eks_node_group",
+      "terraform_name": "main",
+      "index": "b",
+      "attributes": {
+        "id": "abuelito-eks:abuelito-eks-b",
+        "arn": "arn:aws:eks:us-east-1:455982475279:nodegroup/abuelito-eks/abuelito-eks-b/22d0c426-545c-61bd-d0a1-4f1f9ff34bd1",
+        "version": "1.37",
+        "instance_types": [
+          "t4g.small"
+        ],
+        "ami_type": "AL2023_ARM_64_STANDARD",
+        "capacity_type": "ON_DEMAND",
+        "disk_size": 20
+      }
+    },
+    {
+      "type": "aws_eks_pod_identity_association",
+      "terraform_name": "cloudwatch",
+      "index": null,
+      "attributes": {
+        "id": "a-1wny6b7iz5esxmz3o"
+      }
+    },
+    {
+      "type": "aws_iam_role",
+      "terraform_name": "cloudwatch",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-cloudwatch",
+        "name": "abuelito-eks-cloudwatch",
+        "arn": "arn:aws:iam::455982475279:role/abuelito-eks-cloudwatch"
+      }
+    },
+    {
+      "type": "aws_iam_role",
+      "terraform_name": "cluster",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-cluster",
+        "name": "abuelito-eks-cluster",
+        "arn": "arn:aws:iam::455982475279:role/abuelito-eks-cluster"
+      }
+    },
+    {
+      "type": "aws_iam_role",
+      "terraform_name": "nodes",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-nodes",
+        "name": "abuelito-eks-nodes",
+        "arn": "arn:aws:iam::455982475279:role/abuelito-eks-nodes"
+      }
+    },
+    {
+      "type": "aws_iam_role_policy_attachment",
+      "terraform_name": "cloudwatch",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-cloudwatch/arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      }
+    },
+    {
+      "type": "aws_iam_role_policy_attachment",
+      "terraform_name": "cluster",
+      "index": null,
+      "attributes": {
+        "id": "abuelito-eks-cluster/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      }
+    },
+    {
+      "type": "aws_iam_role_policy_attachment",
+      "terraform_name": "nodes",
+      "index": "AmazonEC2ContainerRegistryPullOnly",
+      "attributes": {
+        "id": "abuelito-eks-nodes/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+      }
+    },
+    {
+      "type": "aws_iam_role_policy_attachment",
+      "terraform_name": "nodes",
+      "index": "AmazonEKSWorkerNodePolicy",
+      "attributes": {
+        "id": "abuelito-eks-nodes/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+      }
+    },
+    {
+      "type": "aws_iam_role_policy_attachment",
+      "terraform_name": "nodes",
+      "index": "AmazonEKS_CNI_Policy",
+      "attributes": {
+        "id": "abuelito-eks-nodes/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+      }
+    },
+    {
+      "type": "aws_internet_gateway",
+      "terraform_name": "main",
+      "index": null,
+      "attributes": {
+        "id": "igw-05b4b2d412acbe54e",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:internet-gateway/igw-05b4b2d412acbe54e",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_lb",
+      "terraform_name": "main",
+      "index": null,
+      "attributes": {
+        "id": "arn:aws:elasticloadbalancing:us-east-1:455982475279:loadbalancer/app/abuelito-eks/c560177191d11c49",
+        "name": "abuelito-eks",
+        "arn": "arn:aws:elasticloadbalancing:us-east-1:455982475279:loadbalancer/app/abuelito-eks/c560177191d11c49",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_lb_listener",
+      "terraform_name": "http",
+      "index": null,
+      "attributes": {
+        "id": "arn:aws:elasticloadbalancing:us-east-1:455982475279:listener/app/abuelito-eks/c560177191d11c49/6b2855ad79ab47c7",
+        "arn": "arn:aws:elasticloadbalancing:us-east-1:455982475279:listener/app/abuelito-eks/c560177191d11c49/6b2855ad79ab47c7"
+      }
+    },
+    {
+      "type": "aws_lb_listener",
+      "terraform_name": "https",
+      "index": 0,
+      "attributes": {
+        "id": "arn:aws:elasticloadbalancing:us-east-1:455982475279:listener/app/abuelito-eks/c560177191d11c49/6e448f138cbf4039",
+        "arn": "arn:aws:elasticloadbalancing:us-east-1:455982475279:listener/app/abuelito-eks/c560177191d11c49/6e448f138cbf4039"
+      }
+    },
+    {
+      "type": "aws_lb_target_group",
+      "terraform_name": "app",
+      "index": null,
+      "attributes": {
+        "id": "arn:aws:elasticloadbalancing:us-east-1:455982475279:targetgroup/abuelito-eks-app/b8fb799a316b53d8",
+        "name": "abuelito-eks-app",
+        "arn": "arn:aws:elasticloadbalancing:us-east-1:455982475279:targetgroup/abuelito-eks-app/b8fb799a316b53d8",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_nat_gateway",
+      "terraform_name": "main",
+      "index": "a",
+      "attributes": {
+        "id": "nat-017a24800aeea6316",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_nat_gateway",
+      "terraform_name": "main",
+      "index": "b",
+      "attributes": {
+        "id": "nat-05925d98f2b5ba9c5",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_route",
+      "terraform_name": "internet",
+      "index": null,
+      "attributes": {
+        "id": "r-rtb-014d8fe1ac25532bb1080289494"
+      }
+    },
+    {
+      "type": "aws_route",
+      "terraform_name": "nat",
+      "index": "a",
+      "attributes": {
+        "id": "r-rtb-0a830a6b139c42ad01080289494"
+      }
+    },
+    {
+      "type": "aws_route",
+      "terraform_name": "nat",
+      "index": "b",
+      "attributes": {
+        "id": "r-rtb-0daa06dd92b871ac21080289494"
+      }
+    },
+    {
+      "type": "aws_route_table",
+      "terraform_name": "private",
+      "index": "a",
+      "attributes": {
+        "id": "rtb-0a830a6b139c42ad0",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:route-table/rtb-0a830a6b139c42ad0",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_route_table",
+      "terraform_name": "private",
+      "index": "b",
+      "attributes": {
+        "id": "rtb-0daa06dd92b871ac2",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:route-table/rtb-0daa06dd92b871ac2",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_route_table",
+      "terraform_name": "public",
+      "index": null,
+      "attributes": {
+        "id": "rtb-014d8fe1ac25532bb",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:route-table/rtb-014d8fe1ac25532bb",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_route_table_association",
+      "terraform_name": "private",
+      "index": "a",
+      "attributes": {
+        "id": "rtbassoc-0ddfdd0ac25acaf9b"
+      }
+    },
+    {
+      "type": "aws_route_table_association",
+      "terraform_name": "private",
+      "index": "b",
+      "attributes": {
+        "id": "rtbassoc-03ae1cebf788118c4"
+      }
+    },
+    {
+      "type": "aws_route_table_association",
+      "terraform_name": "public",
+      "index": "a",
+      "attributes": {
+        "id": "rtbassoc-03e520509f840f302"
+      }
+    },
+    {
+      "type": "aws_route_table_association",
+      "terraform_name": "public",
+      "index": "b",
+      "attributes": {
+        "id": "rtbassoc-09e07d6c08e22ca19"
+      }
+    },
+    {
+      "type": "aws_security_group",
+      "terraform_name": "alb",
+      "index": null,
+      "attributes": {
+        "id": "sg-04b08b3914a5948ab",
+        "name": "abuelito-eks-alb-ea3ef1042ed28b30cdb4a5563a",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group/sg-04b08b3914a5948ab",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_security_group",
+      "terraform_name": "database",
+      "index": null,
+      "attributes": {
+        "id": "sg-0e683ba503be2a7b1",
+        "name": "abuelito-eks-db-4a271faf0604846de9381cbd48",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group/sg-0e683ba503be2a7b1",
+        "vpc_id": "vpc-091900171f0bef280"
+      }
+    },
+    {
+      "type": "aws_subnet",
+      "terraform_name": "private",
+      "index": "a",
+      "attributes": {
+        "id": "subnet-0500470e54087a0ef",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:subnet/subnet-0500470e54087a0ef",
+        "vpc_id": "vpc-091900171f0bef280",
+        "cidr_block": "10.42.16.0/24"
+      }
+    },
+    {
+      "type": "aws_subnet",
+      "terraform_name": "private",
+      "index": "b",
+      "attributes": {
+        "id": "subnet-04f680ab6def7fedd",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:subnet/subnet-04f680ab6def7fedd",
+        "vpc_id": "vpc-091900171f0bef280",
+        "cidr_block": "10.42.17.0/24"
+      }
+    },
+    {
+      "type": "aws_subnet",
+      "terraform_name": "public",
+      "index": "a",
+      "attributes": {
+        "id": "subnet-0d820bfdc94c22532",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:subnet/subnet-0d820bfdc94c22532",
+        "vpc_id": "vpc-091900171f0bef280",
+        "cidr_block": "10.42.0.0/24"
+      }
+    },
+    {
+      "type": "aws_subnet",
+      "terraform_name": "public",
+      "index": "b",
+      "attributes": {
+        "id": "subnet-0ac38013c51966959",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:subnet/subnet-0ac38013c51966959",
+        "vpc_id": "vpc-091900171f0bef280",
+        "cidr_block": "10.42.1.0/24"
+      }
+    },
+    {
+      "type": "aws_vpc",
+      "terraform_name": "main",
+      "index": null,
+      "attributes": {
+        "id": "vpc-091900171f0bef280",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:vpc/vpc-091900171f0bef280",
+        "cidr_block": "10.42.0.0/16"
+      }
+    },
+    {
+      "type": "aws_vpc_security_group_egress_rule",
+      "terraform_name": "alb_nodes",
+      "index": null,
+      "attributes": {
+        "id": "sgr-0ea2b9010804d3bdf",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group-rule/sgr-0ea2b9010804d3bdf"
+      }
+    },
+    {
+      "type": "aws_vpc_security_group_ingress_rule",
+      "terraform_name": "alb_http",
+      "index": null,
+      "attributes": {
+        "id": "sgr-0a9623396d349b729",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group-rule/sgr-0a9623396d349b729"
+      }
+    },
+    {
+      "type": "aws_vpc_security_group_ingress_rule",
+      "terraform_name": "alb_https",
+      "index": 0,
+      "attributes": {
+        "id": "sgr-0dbd7390a8c8d1c7a",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group-rule/sgr-0dbd7390a8c8d1c7a"
+      }
+    },
+    {
+      "type": "aws_vpc_security_group_ingress_rule",
+      "terraform_name": "database_eks",
+      "index": null,
+      "attributes": {
+        "id": "sgr-08c084126c8ced7cd",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group-rule/sgr-08c084126c8ced7cd"
+      }
+    },
+    {
+      "type": "aws_vpc_security_group_ingress_rule",
+      "terraform_name": "nodes_alb",
+      "index": null,
+      "attributes": {
+        "id": "sgr-089dfcdbd2f9e6b03",
+        "arn": "arn:aws:ec2:us-east-1:455982475279:security-group-rule/sgr-089dfcdbd2f9e6b03"
+      }
+    }
+  ]
+}

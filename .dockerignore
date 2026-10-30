@@ -7,3 +7,12 @@ Dockerfile*
 README*
 npm-debug.log*
 docker-hola
+.github
+deploy
+docs
+.private
+backups
+venv*
+*.pt
+migrator-task.json
+public/evidence

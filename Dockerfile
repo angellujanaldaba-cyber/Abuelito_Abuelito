@@ -36,4 +36,12 @@
     EXPOSE 3000
     
     CMD ["node", "server.js"]
-    
+
+        # Imagen para ejecutar migraciones de Prisma
+    FROM deps AS migrator
+
+    WORKDIR /app
+
+    COPY prisma ./prisma
+
+    CMD ["npx", "prisma", "migrate", "deploy"]

@@ -1,0 +1,16 @@
+{
+  "source_test": "abuelito-prueba-001",
+  "repository": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web",
+  "images": {
+    "web": {
+      "local_id": "sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb",
+      "tag": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web:web-local001-20261029",
+      "uri": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb"
+    },
+    "migrator": {
+      "local_id": "sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2",
+      "tag": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web:migrator-local001-20261029",
+      "uri": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2"
+    }
+  }
+}

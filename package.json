@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "node .next/standalone/server.js",
-  "lint": "eslint",
-  "postinstall": "prisma generate"
-},
-
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node .next/standalone/server.js",
+    "lint": "eslint",
+    "postinstall": "prisma generate"
+  },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.1038.0",
+    "@aws-sdk/client-sns": "^3.1039.0",
     "@prisma/client": "^6.19.0",
     "lucide-react": "^0.554.0",
     "next": "16.0.3",

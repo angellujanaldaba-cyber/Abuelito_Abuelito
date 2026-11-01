@@ -1,0 +1,29 @@
+{
+  "configured_date": "2026-10-31",
+  "account": "455982475279",
+  "region": "us-east-1",
+  "repository": "angellujanaldaba-cyber/Abuelito_Abuelito",
+  "state_bucket": "abuelito-eks-tfstate-455982475279-us-east-1",
+  "state_keys": {
+    "bootstrap": "abuelito/bootstrap/terraform.tfstate",
+    "workload": "abuelito/dev/terraform.tfstate"
+  },
+  "roles": {
+    "build": "arn:aws:iam::455982475279:role/abuelito-ci-build",
+    "infrastructure": "arn:aws:iam::455982475279:role/abuelito-ci-infrastructure",
+    "deploy": "arn:aws:iam::455982475279:role/abuelito-ci-deploy"
+  },
+  "bootstrap_apply": {
+    "created": 14,
+    "changed": 0,
+    "destroyed": 0
+  },
+  "policy_validation": "IAM Access Analyzer: no findings in five identity policies",
+  "negative_permission_checks": "infra cannot delete or edit CI build role; build cannot RunInstances or CreateDBInstance",
+  "github_environment_variables": "configured",
+  "oidc_connection": "pending GitHub run",
+  "private_runner": "not_configured",
+  "workload_status": "destroyed; not recreated during bootstrap",
+  "snapshot_preserved": "abuelito-eks-final-20261029",
+  "functional_tests": "user only; none performed"
+}

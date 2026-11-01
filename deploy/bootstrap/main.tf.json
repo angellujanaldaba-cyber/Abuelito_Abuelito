@@ -1,0 +1,150 @@
+{
+  "terraform": {
+    "required_version": "~> 1.16.0",
+    "required_providers": {
+      "aws": {
+        "source": "hashicorp/aws",
+        "version": "~> 6.0"
+      }
+    }
+  },
+  "provider": {
+    "aws": {
+      "region": "us-east-1",
+      "allowed_account_ids": [
+        "455982475279"
+      ],
+      "default_tags": {
+        "tags": {
+          "Project": "abuelito-ci",
+          "ManagedBy": "Terraform"
+        }
+      }
+    }
+  },
+  "resource": {
+    "aws_s3_bucket": {
+      "state": {
+        "bucket": "abuelito-eks-tfstate-455982475279-us-east-1",
+        "force_destroy": false,
+        "lifecycle": {
+          "prevent_destroy": true
+        }
+      }
+    },
+    "aws_s3_bucket_public_access_block": {
+      "state": {
+        "bucket": "${aws_s3_bucket.state.id}",
+        "block_public_acls": true,
+        "block_public_policy": true,
+        "ignore_public_acls": true,
+        "restrict_public_buckets": true
+      }
+    },
+    "aws_s3_bucket_versioning": {
+      "state": {
+        "bucket": "${aws_s3_bucket.state.id}",
+        "versioning_configuration": {
+          "status": "Enabled"
+        }
+      }
+    },
+    "aws_s3_bucket_server_side_encryption_configuration": {
+      "state": {
+        "bucket": "${aws_s3_bucket.state.id}",
+        "rule": {
+          "apply_server_side_encryption_by_default": {
+            "sse_algorithm": "AES256"
+          }
+        }
+      }
+    },
+    "aws_s3_bucket_policy": {
+      "tls": {
+        "bucket": "${aws_s3_bucket.state.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1\", \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1/*\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}]}"
+      }
+    },
+    "aws_s3_bucket_lifecycle_configuration": {
+      "plans": {
+        "bucket": "${aws_s3_bucket.state.id}",
+        "rule": [
+          {
+            "id": "expire-private-plans",
+            "status": "Enabled",
+            "filter": {
+              "prefix": "plans/"
+            },
+            "expiration": {
+              "days": 7
+            },
+            "noncurrent_version_expiration": {
+              "noncurrent_days": 7
+            },
+            "abort_incomplete_multipart_upload": {
+              "days_after_initiation": 1
+            }
+          }
+        ]
+      }
+    },
+    "aws_iam_role": {
+      "build": {
+        "name": "abuelito-ci-build",
+        "assume_role_policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Federated\": \"arn:aws:iam::455982475279:oidc-provider/token.actions.githubusercontent.com\"}, \"Action\": \"sts:AssumeRoleWithWebIdentity\", \"Condition\": {\"StringEquals\": {\"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\", \"token.actions.githubusercontent.com:sub\": \"repo:angellujanaldaba-cyber/Abuelito_Abuelito:environment:dev-build\"}}}]}",
+        "max_session_duration": 3600
+      },
+      "infrastructure": {
+        "name": "abuelito-ci-infrastructure",
+        "assume_role_policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Federated\": \"arn:aws:iam::455982475279:oidc-provider/token.actions.githubusercontent.com\"}, \"Action\": \"sts:AssumeRoleWithWebIdentity\", \"Condition\": {\"StringEquals\": {\"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\", \"token.actions.githubusercontent.com:sub\": \"repo:angellujanaldaba-cyber/Abuelito_Abuelito:environment:dev-infrastructure\"}}}]}",
+        "max_session_duration": 3600
+      },
+      "deploy": {
+        "name": "abuelito-ci-deploy",
+        "assume_role_policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Federated\": \"arn:aws:iam::455982475279:oidc-provider/token.actions.githubusercontent.com\"}, \"Action\": \"sts:AssumeRoleWithWebIdentity\", \"Condition\": {\"StringEquals\": {\"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\", \"token.actions.githubusercontent.com:sub\": \"repo:angellujanaldaba-cyber/Abuelito_Abuelito:environment:dev-deploy\"}}}]}",
+        "max_session_duration": 3600
+      }
+    },
+    "aws_iam_role_policy": {
+      "build": {
+        "name": "publish-abuelito-images",
+        "role": "${aws_iam_role.build.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"ecr:GetAuthorizationToken\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"ecr:BatchCheckLayerAvailability\", \"ecr:InitiateLayerUpload\", \"ecr:UploadLayerPart\", \"ecr:CompleteLayerUpload\", \"ecr:PutImage\", \"ecr:BatchGetImage\", \"ecr:GetDownloadUrlForLayer\", \"ecr:DescribeImages\"], \"Resource\": \"arn:aws:ecr:us-east-1:455982475279:repository/abuelito-eks-web\"}]}"
+      },
+      "deploy": {
+        "name": "describe-abuelito-cluster",
+        "role": "${aws_iam_role.deploy.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"eks:DescribeCluster\"], \"Resource\": \"arn:aws:eks:us-east-1:455982475279:cluster/abuelito-eks\"}]}"
+      },
+      "infra_resources": {
+        "name": "manage-workload-resources",
+        "role": "${aws_iam_role.infrastructure.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"ec2:Describe*\", \"ec2:CreateVpc\", \"ec2:DeleteVpc\", \"ec2:ModifyVpcAttribute\", \"ec2:CreateSubnet\", \"ec2:DeleteSubnet\", \"ec2:ModifySubnetAttribute\", \"ec2:CreateInternetGateway\", \"ec2:DeleteInternetGateway\", \"ec2:AttachInternetGateway\", \"ec2:DetachInternetGateway\", \"ec2:CreateRouteTable\", \"ec2:DeleteRouteTable\", \"ec2:AssociateRouteTable\", \"ec2:DisassociateRouteTable\", \"ec2:CreateRoute\", \"ec2:DeleteRoute\", \"ec2:ReplaceRoute\", \"ec2:AllocateAddress\", \"ec2:ReleaseAddress\", \"ec2:CreateNatGateway\", \"ec2:DeleteNatGateway\", \"ec2:CreateSecurityGroup\", \"ec2:DeleteSecurityGroup\", \"ec2:AuthorizeSecurityGroupIngress\", \"ec2:RevokeSecurityGroupIngress\", \"ec2:AuthorizeSecurityGroupEgress\", \"ec2:RevokeSecurityGroupEgress\", \"ec2:ModifySecurityGroupRules\", \"ec2:CreateTags\", \"ec2:DeleteTags\"], \"Resource\": \"*\", \"Condition\": {\"StringEquals\": {\"aws:RequestedRegion\": \"us-east-1\"}}}, {\"Effect\": \"Allow\", \"Action\": [\"eks:Describe*\", \"eks:List*\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"eks:CreateCluster\", \"eks:DeleteCluster\", \"eks:UpdateClusterConfig\", \"eks:UpdateClusterVersion\", \"eks:CreateNodegroup\", \"eks:DeleteNodegroup\", \"eks:UpdateNodegroupConfig\", \"eks:UpdateNodegroupVersion\", \"eks:CreateAddon\", \"eks:UpdateAddon\", \"eks:DeleteAddon\", \"eks:CreateAccessEntry\", \"eks:UpdateAccessEntry\", \"eks:DeleteAccessEntry\", \"eks:AssociateAccessPolicy\", \"eks:DisassociateAccessPolicy\", \"eks:CreatePodIdentityAssociation\", \"eks:UpdatePodIdentityAssociation\", \"eks:DeletePodIdentityAssociation\", \"eks:TagResource\", \"eks:UntagResource\"], \"Resource\": [\"arn:aws:eks:us-east-1:455982475279:cluster/abuelito-eks\", \"arn:aws:eks:us-east-1:455982475279:nodegroup/abuelito-eks/*\", \"arn:aws:eks:us-east-1:455982475279:addon/abuelito-eks/*\", \"arn:aws:eks:us-east-1:455982475279:access-entry/abuelito-eks/*\", \"arn:aws:eks:us-east-1:455982475279:podidentityassociation/abuelito-eks/*\"]}, {\"Effect\": \"Allow\", \"Action\": [\"rds:Describe*\", \"rds:ListTagsForResource\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"rds:CreateDBInstance\", \"rds:DeleteDBInstance\", \"rds:ModifyDBInstance\", \"rds:CreateDBSubnetGroup\", \"rds:ModifyDBSubnetGroup\", \"rds:DeleteDBSubnetGroup\", \"rds:AddTagsToResource\", \"rds:RemoveTagsFromResource\", \"rds:CreateDBSnapshot\"], \"Resource\": [\"arn:aws:rds:us-east-1:455982475279:db:abuelito-eks-db\", \"arn:aws:rds:us-east-1:455982475279:subgrp:abuelito-eks-db\", \"arn:aws:rds:us-east-1:455982475279:snapshot:abuelito-eks-final-*\", \"arn:aws:rds:us-east-1:455982475279:pg:default.postgres16\", \"arn:aws:rds:us-east-1:455982475279:og:default:postgres-16\"]}, {\"Effect\": \"Allow\", \"Action\": [\"elasticloadbalancing:Describe*\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"elasticloadbalancing:CreateLoadBalancer\", \"elasticloadbalancing:DeleteLoadBalancer\", \"elasticloadbalancing:ModifyLoadBalancerAttributes\", \"elasticloadbalancing:SetSecurityGroups\", \"elasticloadbalancing:SetSubnets\", \"elasticloadbalancing:CreateTargetGroup\", \"elasticloadbalancing:DeleteTargetGroup\", \"elasticloadbalancing:ModifyTargetGroup\", \"elasticloadbalancing:ModifyTargetGroupAttributes\", \"elasticloadbalancing:CreateListener\", \"elasticloadbalancing:DeleteListener\", \"elasticloadbalancing:ModifyListener\", \"elasticloadbalancing:AddTags\", \"elasticloadbalancing:RemoveTags\"], \"Resource\": [\"arn:aws:elasticloadbalancing:us-east-1:455982475279:loadbalancer/app/abuelito-eks/*\", \"arn:aws:elasticloadbalancing:us-east-1:455982475279:targetgroup/abuelito-eks-app/*\", \"arn:aws:elasticloadbalancing:us-east-1:455982475279:listener/app/abuelito-eks/*/*\"]}, {\"Effect\": \"Allow\", \"Action\": [\"autoscaling:Describe*\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"autoscaling:AttachLoadBalancerTargetGroups\", \"autoscaling:DetachLoadBalancerTargetGroups\"], \"Resource\": \"arn:aws:autoscaling:us-east-1:455982475279:autoScalingGroup:*:autoScalingGroupName:eks-abuelito-eks-*\"}, {\"Effect\": \"Allow\", \"Action\": [\"ecr:GetAuthorizationToken\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"ecr:CreateRepository\", \"ecr:DeleteRepository\", \"ecr:DescribeRepositories\", \"ecr:ListTagsForResource\", \"ecr:TagResource\", \"ecr:UntagResource\", \"ecr:PutImageTagMutability\", \"ecr:PutImageScanningConfiguration\"], \"Resource\": \"arn:aws:ecr:us-east-1:455982475279:repository/abuelito-eks-web\"}]}"
+      },
+      "infra_support": {
+        "name": "manage-workload-support",
+        "role": "${aws_iam_role.infrastructure.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"iam:CreateRole\", \"iam:DeleteRole\", \"iam:GetRole\", \"iam:UpdateAssumeRolePolicy\", \"iam:ListRolePolicies\", \"iam:ListAttachedRolePolicies\", \"iam:TagRole\", \"iam:UntagRole\"], \"Resource\": [\"arn:aws:iam::455982475279:role/abuelito-eks-cluster\", \"arn:aws:iam::455982475279:role/abuelito-eks-nodes\", \"arn:aws:iam::455982475279:role/abuelito-eks-cloudwatch\"]}, {\"Effect\": \"Allow\", \"Action\": [\"iam:AttachRolePolicy\", \"iam:DetachRolePolicy\"], \"Resource\": [\"arn:aws:iam::455982475279:role/abuelito-eks-cluster\", \"arn:aws:iam::455982475279:role/abuelito-eks-nodes\", \"arn:aws:iam::455982475279:role/abuelito-eks-cloudwatch\"], \"Condition\": {\"ArnEquals\": {\"iam:PolicyARN\": [\"arn:aws:iam::aws:policy/AmazonEKSClusterPolicy\", \"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\", \"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly\", \"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\", \"arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy\"]}}}, {\"Effect\": \"Allow\", \"Action\": [\"iam:PassRole\"], \"Resource\": [\"arn:aws:iam::455982475279:role/abuelito-eks-cluster\", \"arn:aws:iam::455982475279:role/abuelito-eks-nodes\", \"arn:aws:iam::455982475279:role/abuelito-eks-cloudwatch\"], \"Condition\": {\"StringEquals\": {\"iam:PassedToService\": [\"eks.amazonaws.com\", \"ec2.amazonaws.com\", \"pods.eks.amazonaws.com\"]}}}, {\"Effect\": \"Allow\", \"Action\": [\"iam:CreateServiceLinkedRole\"], \"Resource\": \"arn:aws:iam::455982475279:role/aws-service-role/*\", \"Condition\": {\"StringEquals\": {\"iam:AWSServiceName\": [\"eks.amazonaws.com\", \"eks-nodegroup.amazonaws.com\", \"elasticloadbalancing.amazonaws.com\", \"rds.amazonaws.com\", \"autoscaling.amazonaws.com\"]}}}, {\"Effect\": \"Allow\", \"Action\": [\"iam:GetRole\"], \"Resource\": \"arn:aws:iam::455982475279:role/aws-service-role/*\"}, {\"Effect\": \"Allow\", \"Action\": [\"acm:DescribeCertificate\"], \"Resource\": \"arn:aws:acm:us-east-1:455982475279:certificate/be017180-4466-4df4-8c71-c531169ccddd\"}, {\"Effect\": \"Allow\", \"Action\": [\"kms:DescribeKey\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"secretsmanager:CreateSecret\", \"secretsmanager:TagResource\"], \"Resource\": \"arn:aws:secretsmanager:us-east-1:455982475279:secret:rds!db-*\"}, {\"Effect\": \"Allow\", \"Action\": [\"logs:DescribeLogGroups\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogGroup\", \"logs:DeleteLogGroup\", \"logs:PutRetentionPolicy\", \"logs:DeleteRetentionPolicy\", \"logs:ListTagsForResource\", \"logs:TagResource\", \"logs:UntagResource\"], \"Resource\": [\"arn:aws:logs:us-east-1:455982475279:log-group:/aws/eks/abuelito-eks/*\", \"arn:aws:logs:us-east-1:455982475279:log-group:/aws/containerinsights/abuelito-eks/*\", \"arn:aws:logs:us-east-1:455982475279:log-group:/aws/rds/instance/abuelito-eks-db/*\"]}, {\"Effect\": \"Allow\", \"Action\": [\"cloudwatch:PutDashboard\", \"cloudwatch:GetDashboard\", \"cloudwatch:DeleteDashboards\"], \"Resource\": \"arn:aws:cloudwatch::455982475279:dashboard/abuelito-eks\"}, {\"Effect\": \"Allow\", \"Action\": [\"cloudwatch:PutMetricAlarm\", \"cloudwatch:DeleteAlarms\", \"cloudwatch:DescribeAlarms\", \"cloudwatch:ListTagsForResource\", \"cloudwatch:TagResource\", \"cloudwatch:UntagResource\"], \"Resource\": \"arn:aws:cloudwatch:us-east-1:455982475279:alarm:abuelito-eks-*\"}]}"
+      },
+      "infra_state": {
+        "name": "private-state-and-plans",
+        "role": "${aws_iam_role.infrastructure.id}",
+        "policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"s3:ListBucket\"], \"Resource\": \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1\", \"Condition\": {\"StringLike\": {\"s3:prefix\": [\"abuelito/dev/*\", \"plans/dev/*\"]}}}, {\"Effect\": \"Allow\", \"Action\": [\"s3:GetBucketLocation\"], \"Resource\": \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1\"}, {\"Effect\": \"Allow\", \"Action\": [\"s3:GetObject\", \"s3:PutObject\"], \"Resource\": [\"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1/abuelito/dev/terraform.tfstate\", \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1/abuelito/dev/terraform.tfstate.tflock\", \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1/plans/dev/*\"]}, {\"Effect\": \"Allow\", \"Action\": [\"s3:DeleteObject\"], \"Resource\": \"arn:aws:s3:::abuelito-eks-tfstate-455982475279-us-east-1/abuelito/dev/terraform.tfstate.tflock\"}]}"
+      }
+    }
+  },
+  "output": {
+    "state_bucket": {
+      "value": "${aws_s3_bucket.state.id}"
+    },
+    "build_role_arn": {
+      "value": "${aws_iam_role.build.arn}"
+    },
+    "infrastructure_role_arn": {
+      "value": "${aws_iam_role.infrastructure.arn}"
+    },
+    "deploy_role_arn": {
+      "value": "${aws_iam_role.deploy.arn}"
+    }
+  }
+}

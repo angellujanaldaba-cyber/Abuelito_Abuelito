@@ -56,7 +56,9 @@ Deploy necesita eks:DescribeCluster, un Access Entry al namespace abuelito y con
 | dev-infrastructure | AWS_DEPLOY_ROLE_ARN | Rol OIDC de deploy que recibira Access Entry limitado |
 | dev-deploy | AWS_DEPLOY_ROLE_ARN | Mismo rol de deploy |
 
-Estos roles, variables y environments requieren configuracion externa; los workflows fallan o quedan pendientes si no existen.
+Configurados el 31 de octubre de 2026: roles abuelito-ci-build, abuelito-ci-infrastructure y abuelito-ci-deploy; variables de los tres environments; bucket abuelito-eks-tfstate-455982475279-us-east-1. Codigo en deploy/bootstrap. ADMIN_CIDRS_JSON usa la IP observada 177.245.183.167/32: actualizarla si cambia la conexion. Esto NO significa que EKS/RDS esten creados ni que el runner privado exista.
+
+El workflow manual aws-connection.yml comprueba OIDC (dev-build) y, para dev-infrastructure, lectura del backend. El segundo requiere la aprobacion humana del environment. No crea recursos.
 
 ## 3. Backend Terraform antes del primer plan
 

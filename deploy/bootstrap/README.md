@@ -30,3 +30,19 @@ Los permisos fueron validados con IAM Access Analyzer. La conexion OIDC se compr
 con el workflow manual aws-connection.yml sin crear infraestructura. Un plan futuro
 puede revelar permisos adicionales de APIs dependientes: revisar el error y ampliar
 solo lo necesario; no sustituir estas politicas por AdministratorAccess.
+
+## Despues del retiro completo del laboratorio
+
+El bucket y estos tres roles se eliminaron por solicitud del usuario. El estado
+final vacio y las versiones previas quedaron archivados de forma privada en la
+Mac; ver deploy/records/destruction-20261031.json. La configuracion original
+prevent_destroy=true permanece en Git: el retiro se hizo desde una copia aislada,
+con backend local, despues de respaldar y vaciar el bucket dedicado.
+
+Para comenzar otra vez desde la Mac: verificar que no existen los recursos;
+retirar temporalmente backend.tf de esta carpeta e inicializar con -reconfigure
+contra un state local nuevo/vacio. Revisar el plan y crear IAM/S3. Despues restaurar
+backend.tf y migrar ese state nuevo al bucket con init -migrate-state -force-copy.
+No restaurar terraform.tfstate.backup ni un state anterior de recursos activos.
+Los workflows no pueden crear su propio bucket antes de autenticarse; esta fase
+sigue siendo un bootstrap del operador.

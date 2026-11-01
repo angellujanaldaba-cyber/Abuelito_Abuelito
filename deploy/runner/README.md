@@ -1,6 +1,6 @@
 # Runner privado ARM64, de un solo uso
 
-Estado de activacion: deploy/records/runner-activation-20261031.json.
+Estado actual: recursos retirados por solicitud del usuario; ver deploy/records/destruction-20261031.json. La activacion previa esta en deploy/records/runner-activation-20261031.json.
 El runner es temporal: un registro Online no garantiza que siga conectado despues
 del trabajo o de su limite de vida. Necesita VPC/subred privada/NAT/API privado de
 EKS; no usar la VPC default para sustituir esa red.

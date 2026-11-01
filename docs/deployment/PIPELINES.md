@@ -1,5 +1,7 @@
 # Pipelines de Abuelito (un repositorio)
 
+ESTADO ACTUAL: el usuario solicito destruir el laboratorio y sus recursos IAM/S3. La destruccion termino; consultar deploy/records/destruction-20261031.json. Los workflows y registros se conservan, pero el backend y roles AWS ya no existen.
+
 Aplicacion en la raiz; Terraform en deploy/terraform; Kubernetes en deploy/kubernetes; evidencia historica en deploy/records.
 El laboratorio anterior fue destruido el 29 de octubre. El usuario autorizo su recuperacion el 31 de octubre; consultar deploy/records/runner-activation-20261031.json para esa activacion. Preparar workflows y hacer push no recrea AWS por si solo.
 
@@ -67,7 +69,7 @@ El workflow guarda state en abuelito/dev/terraform.tfstate y planes privados en 
 Configurar ciclo de vida para expirar planes antiguos, conservando la politica necesaria de versiones del state.
 Para state/lock: ListBucket y GetObject/PutObject; DeleteObject solo necesario para el lock. Para planes, acceso de escritura/lectura a plans/dev/.
 
-El backend S3 del laboratorio se inicializo vacio tras destruir la instalacion anterior. La recuperacion autorizada del 31 de octubre usa ese mismo backend: ahora debe conservarse su state activo. Nunca aplicar un state vacio sobre el entorno existente ni restaurar encima el state historico del 29 de octubre.
+El backend S3 del laboratorio se inicializo vacio tras destruir la instalacion anterior. La recuperacion autorizada del 31 de octubre uso ese mismo backend. Al cerrar el laboratorio se archivaron sus versiones y se elimino el bucket. Para una nueva instalacion, crear primero bootstrap IAM/S3; no usar las copias historicas de state activo como si fueran recursos existentes. Nunca aplicar un state vacio sobre el entorno existente ni restaurar encima el state historico del 29 de octubre.
 
 ## 4. Crear infraestructura (cuando se autoricen costos)
 

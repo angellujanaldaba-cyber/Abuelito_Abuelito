@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-31",
+  "authorization": "User requested destroying all resources of this laboratory, then detailed explanation",
+  "status": "complete",
+  "scope": [
+    "workload EKS/RDS/network/ALB/ECR/CloudWatch",
+    "runner infrastructure",
+    "dedicated bootstrap IAM/S3"
+  ],
+  "preserved": [
+    "existing shared ACM certificate",
+    "existing shared GitHub OIDC provider",
+    "resources of other projects",
+    "GitHub repository and code",
+    "local image/file backups",
+    "historical RDS snapshot and new final snapshot"
+  ],
+  "runner_plan_deletes": 7,
+  "workload_plan_deletes": 63,
+  "bootstrap_plan_deletes": 14,
+  "backup_location": ".private/destroy-20261031/ (excluded from Git; private states and backend versions)",
+  "image_archive_verified_sha256": "69096ea407bbe0ab07a3dab2e2368123846f6099b4bcd935672d1ceaa32b2910",
+  "final_snapshot": "abuelito-eks-final-20261031-runner-review",
+  "extra_log_group": "/aws/containerinsights/abuelito-eks/performance",
+  "dns": "not modified; CNAME will point to deleted ALB",
+  "functional_tests": "none performed",
+  "finished_at_local": "2026-10-31T23:33:40.218088-06:00",
+  "verification": {
+    "vpc_remaining": [],
+    "active_instances": [],
+    "active_nat_gateways": [],
+    "elastic_ips": [],
+    "eks": [],
+    "rds": [],
+    "load_balancers": [],
+    "ecr": [],
+    "s3": [],
+    "iam_roles": [],
+    "log_groups": [],
+    "alarms": [],
+    "ebs_volumes_for_cluster": [],
+    "cloudwatch_dashboards": [],
+    "active_rds_managed_secret": [],
+    "security_group_rules": []
+  },
+  "managed_resources_remaining": {
+    "runner": 0,
+    "terraform": 0,
+    "bootstrap": 0
+  },
+  "terraform_resources_destroyed": 84,
+  "extra_log_group_deleted": true,
+  "snapshots_preserved": [
+    {
+      "identifier": "abuelito-eks-final-20261029",
+      "status": "available",
+      "arn": "arn:aws:rds:us-east-1:455982475279:snapshot:abuelito-eks-final-20261029"
+    },
+    {
+      "identifier": "abuelito-eks-final-20261031-runner-review",
+      "status": "available",
+      "arn": "arn:aws:rds:us-east-1:455982475279:snapshot:abuelito-eks-final-20261031-runner-review"
+    }
+  ],
+  "backend_archive": {
+    "object_versions": 34,
+    "delete_markers": 14,
+    "location": ".private/destroy-20261031/backend-versions",
+    "stored_in_git": false
+  },
+  "ongoing_cost_note": "Preserved RDS snapshots can incur storage charges; shared/other-project resources not included in this teardown",
+  "tagging_metadata_note": "Tagging API retains historical references to terminated EC2, deleted NAT and deleted security-group rules; direct service APIs verified their deletion/termination.",
+  "private_state_backup": {
+    "path": "/Users/miguel/Documents/ChatGPT/Abuelito Kubernetes/backups/abuelito-estados-destruccion-20261031.tar.gz",
+    "sha256": "95f7f89268f817622280d3ff73999dc8c14c4ee554233d95d5c43c798b56690e",
+    "bytes": 172239,
+    "stored_in_git": false,
+    "warning": "Historical active states are audit backups; do not restore them over a fresh deployment."
+  }
+}

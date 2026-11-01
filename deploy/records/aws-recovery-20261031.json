@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-31",
+  "status": "prepared_awaiting_dev_deploy_human_review",
+  "workflow": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41270677490",
+  "workflow_status": "waiting",
+  "deployment_commit": "dd6db57da240c03af4989809a27ec21dad4f6607",
+  "image_source_commit": null,
+  "release_identity": "deploy/records/recovery-release.json",
+  "images": "original accepted ARM64 digests republished and remotely verified; not rebuilt",
+  "database": "deploy/records/database-bootstrap-20261031.json",
+  "bootstrap": "completed; dedicated app/migrator users and Secrets; temporary admin Secret removed",
+  "migrations": "pending recovery pipeline",
+  "application": "not redeployed yet",
+  "runner": {
+    "instance_id": "i-0231b8926a15345f8",
+    "github_runner_id": 22,
+    "status_at_verification": "online",
+    "ephemeral": true
+  },
+  "ci": {
+    "url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41270567825",
+    "result": "success; compilation, Terraform, nine release identity checks"
+  },
+  "dns_changed": false,
+  "functional_tests": "none performed; user tests after rollout"
+}

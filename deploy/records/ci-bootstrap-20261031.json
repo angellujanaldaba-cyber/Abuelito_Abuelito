@@ -21,9 +21,25 @@
   "policy_validation": "IAM Access Analyzer: no findings in five identity policies",
   "negative_permission_checks": "infra cannot delete or edit CI build role; build cannot RunInstances or CreateDBInstance",
   "github_environment_variables": "configured",
-  "oidc_connection": "pending GitHub run",
+  "oidc_connection": {
+    "build": "success",
+    "run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41263387319",
+    "infrastructure": "awaiting environment human review",
+    "infrastructure_run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41263432028"
+  },
   "private_runner": "not_configured",
   "workload_status": "destroyed; not recreated during bootstrap",
   "snapshot_preserved": "abuelito-eks-final-20261029",
-  "functional_tests": "user only; none performed"
+  "functional_tests": "user only; none performed",
+  "bootstrap_state_migration": "completed to private S3; follow-up plan no changes",
+  "bucket_verified": {
+    "public": false,
+    "versioning": "Enabled"
+  },
+  "workload_verification": "EKS list empty; final snapshot available",
+  "ci_validation": {
+    "result": "success",
+    "run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41263387240",
+    "source_commit": "9e71491bab1cc3755c7114acee38e6a09f2417d2"
+  }
 }

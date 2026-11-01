@@ -9,3 +9,5 @@
 - El usuario realiza pruebas funcionales. No crear pedidos ni ejecutar pruebas funcionales automaticas.
 - Antes de apply revisar cuenta 455982475279, region us-east-1, plan exacto y autorizacion correspondiente. El trabajo de pipelines no autoriza recrear AWS.
 - Siempre registrar commit, ambos digests, hashes de migraciones, destino de base y resultado manual. No inventar evidencia faltante.
+
+- 2026-10-31: bootstrap CI creado en deploy/bootstrap: tres roles abuelito-ci-* y bucket privado abuelito-eks-tfstate-455982475279-us-east-1; state bootstrap remoto separado. Ver deploy/records/ci-bootstrap-20261031.json. OIDC build y CI validados; comprobacion infrastructure requiere revision humana del environment. Runner privado aun no configurado. EKS/RDS siguen destruidos.

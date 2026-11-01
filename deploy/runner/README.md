@@ -1,8 +1,9 @@
 # Runner privado ARM64, de un solo uso
 
-Estado: configuracion preparada; NO hay instancia creada ni runner conectado.
-Necesita la VPC/subred privada/NAT/API privado del laboratorio EKS. Esa red fue
-eliminada el 29 de octubre. No usar la VPC default para sustituirla.
+Estado de activacion: deploy/records/runner-activation-20261031.json.
+El runner es temporal: un registro Online no garantiza que siga conectado despues
+del trabajo o de su limite de vida. Necesita VPC/subred privada/NAT/API privado de
+EKS; no usar la VPC default para sustituir esa red.
 
 Esta carpeta usa un state S3 separado: abuelito/runner/terraform.tfstate.
 Un operador la administra con su identidad AWS; el rol CI de infraestructura

@@ -1,7 +1,7 @@
 # Pipelines de Abuelito (un repositorio)
 
 Aplicacion en la raiz; Terraform en deploy/terraform; Kubernetes en deploy/kubernetes; evidencia historica en deploy/records.
-AWS fue destruido el 29 de octubre de 2026. Preparar workflows y hacer push no recrea AWS.
+El laboratorio anterior fue destruido el 29 de octubre. El usuario autorizo su recuperacion el 31 de octubre; consultar deploy/records/runner-activation-20261031.json para esa activacion. Preparar workflows y hacer push no recrea AWS por si solo.
 
 ## Workflows
 
@@ -56,7 +56,7 @@ Deploy necesita eks:DescribeCluster, un Access Entry al namespace abuelito y con
 | dev-infrastructure | AWS_DEPLOY_ROLE_ARN | Rol OIDC de deploy que recibira Access Entry limitado |
 | dev-deploy | AWS_DEPLOY_ROLE_ARN | Mismo rol de deploy |
 
-Configurados el 31 de octubre de 2026: roles abuelito-ci-build, abuelito-ci-infrastructure y abuelito-ci-deploy; variables de los tres environments; bucket abuelito-eks-tfstate-455982475279-us-east-1. Codigo en deploy/bootstrap. ADMIN_CIDRS_JSON usa la IP observada 177.245.183.167/32: actualizarla si cambia la conexion. Esto NO significa que EKS/RDS esten creados ni que el runner privado exista.
+Configurados el 31 de octubre de 2026: roles abuelito-ci-build, abuelito-ci-infrastructure y abuelito-ci-deploy; variables de los tres environments; bucket abuelito-eks-tfstate-455982475279-us-east-1. Codigo en deploy/bootstrap. ADMIN_CIDRS_JSON usa la IP observada 177.245.183.167/32: actualizarla si cambia la conexion. Consultar el registro de activacion para el estado del laboratorio y runner; las variables por si solas no prueban su disponibilidad.
 
 El workflow manual aws-connection.yml comprueba OIDC (dev-build) y, para dev-infrastructure, lectura del backend. El segundo requiere la aprobacion humana del environment. No crea recursos.
 
@@ -67,7 +67,7 @@ El workflow guarda state en abuelito/dev/terraform.tfstate y planes privados en 
 Configurar ciclo de vida para expirar planes antiguos, conservando la politica necesaria de versiones del state.
 Para state/lock: ListBucket y GetObject/PutObject; DeleteObject solo necesario para el lock. Para planes, acceso de escritura/lectura a plans/dev/.
 
-Esta copia usa backend S3 vacio. El despliegue anterior ya fue destruido y verificado, por eso puede comenzar sin recursos. Si en el futuro hay state local ACTIVO, migrarlo antes; nunca aplicar un state vacio sobre un entorno existente.
+El backend S3 del laboratorio se inicializo vacio tras destruir la instalacion anterior. La recuperacion autorizada del 31 de octubre usa ese mismo backend: ahora debe conservarse su state activo. Nunca aplicar un state vacio sobre el entorno existente ni restaurar encima el state historico del 29 de octubre.
 
 ## 4. Crear infraestructura (cuando se autoricen costos)
 
@@ -95,7 +95,7 @@ Un operador debe preparar inicialmente esos usuarios, permisos y secretos desde 
 La creacion de esos usuarios no se automatiza con el rol CI ni se copian passwords al repositorio.
 Los scripts manuales originales del chat no son el pipeline generico: tienen bootstrap y nombres historicos. No usarlos ciegamente para sucesivas versiones.
 
-Configuracion del runner de un solo uso preparada en deploy/runner/README.md: requiere primero recrear la red del laboratorio. No hay runner online todavia. Destruir deploy/runner antes de EKS/VPC para retirar su regla de acceso.
+Configuracion del runner de un solo uso en deploy/runner/README.md; activacion y maquina concretas en deploy/records/runner-activation-20261031.json. Destruir deploy/runner antes de EKS/VPC para retirar su regla de acceso.
 
 El job deploy necesita runner dedicado Linux ARM64 con labels self-hosted, linux, ARM64, abuelito-dev; herramientas python3, AWS CLI, kubectl y gh; acceso privado a EKS y salida a GitHub.
 No abrir el API de EKS a 0.0.0.0/0 para runners compartidos. No ejecutar pull requests no confiables en ese runner.

@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-31",
+  "authorization": "User approved recreating the reviewed 63-resource laboratory plan and activating private runner",
+  "workload_plan_sha256": "b04800307664de8630ac0fc19a1d4a5c7966bebabe1aa3752048b7998feb4aea",
+  "workload_status": "created; 63 resources added, 0 changed, 0 destroyed",
+  "runner_status": "registered_online_verified; temporary single-job instance",
+  "application_status": "not redeployed; no migrations or database users/secrets initialized",
+  "snapshot_policy": "historical snapshot preserved; new database from empty per reviewed plan",
+  "functional_tests": "user only; none performed",
+  "runner": {
+    "instance_id": "i-03a37d98e2e8b8074",
+    "private_ip": "10.42.16.80",
+    "public_ip": null,
+    "ssm": "Online",
+    "created_resources": 8,
+    "launch_time_utc": "2026-11-01T03:13:33Z",
+    "max_lifetime_minutes": 60,
+    "github_runner_id": 21,
+    "github_runner_name": "abuelito-a3e691ab-2ba1-4ef1-bf8a-8e78261f9b81",
+    "ephemeral": true,
+    "bootstrap": "cloud-init done",
+    "service": "active",
+    "imds_block": "iptables rule verified",
+    "registration": "temporary token through interactive SSM; not stored in Git/state/SendCommand",
+    "github_status_at_verification": "online"
+  },
+  "outputs": {
+    "cluster_name": "abuelito-eks",
+    "vpc_id": "vpc-0dd3c24db5e7bfc72",
+    "runner_network": {
+      "cluster_security_group_id": "sg-0de961245638ab677",
+      "private_subnet_id": "subnet-05c14edfe064f855a",
+      "vpc_id": "vpc-0dd3c24db5e7bfc72"
+    },
+    "database_endpoint": "abuelito-eks-db.caxyy48u4z9b.us-east-1.rds.amazonaws.com",
+    "cloudflare_cname_target": "abuelito-eks-1554744511.us-east-1.elb.amazonaws.com",
+    "app_repository_url": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web"
+  },
+  "eks_nodes": [
+    {
+      "zone": "us-east-1a",
+      "architecture": "arm64",
+      "ready": true
+    },
+    {
+      "zone": "us-east-1b",
+      "architecture": "arm64",
+      "ready": true
+    }
+  ],
+  "private_runner_check": {
+    "run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41268962652",
+    "status": "waiting",
+    "checks": "architecture, OIDC, private DNS/TLS to EKS, Kubernetes scoped read permission; no application tests",
+    "effect": "consumes the one job; runner terminates on completion"
+  },
+  "dns_changed": false,
+  "database": {
+    "identifier": "abuelito-eks-db",
+    "resource_id": "db-TDIXR7WIATJNTZL7XQZDXFUWRE",
+    "created_at": "2026-11-01T03:13:51.602000+00:00",
+    "endpoint": "abuelito-eks-db.caxyy48u4z9b.us-east-1.rds.amazonaws.com",
+    "engine": "postgres",
+    "engine_version": "16.15",
+    "logical_database": "abuelito",
+    "multi_az": true,
+    "status": "available",
+    "migrations": "not_applied_on_this_new_instance",
+    "application_users_and_secrets": "not_initialized"
+  },
+  "addons": {
+    "eks-pod-identity-agent": "ACTIVE",
+    "amazon-cloudwatch-observability": "ACTIVE"
+  },
+  "images": "historical accepted digests retained in aws-images.json; not published to the recreated ECR yet",
+  "final_terraform_checks": {
+    "workload": "no changes",
+    "runner": "no changes"
+  }
+}

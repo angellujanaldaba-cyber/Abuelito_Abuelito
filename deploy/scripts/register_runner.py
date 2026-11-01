@@ -70,6 +70,7 @@ def main():
                 sent = True
             if b"Runner iniciado para un solo job" in transcript:
                 finished = True
+                break
             done, _ = os.waitpid(pid, os.WNOHANG)
             if done:
                 pid = 0
@@ -80,7 +81,7 @@ def main():
     finally:
         if pid:
             try:
-                os.kill(pid, signal.SIGTERM)
+                os.killpg(pid, signal.SIGTERM)
                 os.waitpid(pid, 0)
             except ProcessLookupError:
                 pass

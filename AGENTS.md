@@ -21,3 +21,5 @@
 - Recover run 41270677490, commit dd6db57da240c03af4989809a27ec21dad4f6607, espera revision humana dev-deploy. Runner22/i-0231b8926a15345f8 registrado Online para este deploy; efimero60min. No autoaprobar. Todavia no migraciones ni rollout; no marcar como desplegado hasta comprobar run. DNS no modificado; pruebas funcionales usuario. Registro aws-recovery-20261031.json.
 
 - Recover run41270677490 SUCCESS: cinco migraciones aplicadas con rol migrator, dos replicas Ready una por zona, dos destinos ALB healthy, imagen web original exacta. Ver aws-recovery-20261031.json. DNS dev aun apunta al ALB viejo 1987555837; cambiar CNAME a abuelito-eks-1554744511.us-east-1.elb.amazonaws.com. Pruebas funcionales pendientes del usuario. No volver a desplegar como si estuviera pendiente.
+
+- Recuperacion cerrada funcionalmente para crear/consultar pedido: usuario compartio captura https://dev.miguelinfra.com/pedido/1 el 2026-10-31. DNS CNAME nuevo1554744511 verificado. aws-recovery-20261031.json actualizado con evidencia manual limitada a ese flujo; reinicio/failover no probados. No guardar datos personales del pedido en Git.

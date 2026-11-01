@@ -1,6 +1,6 @@
 {
   "date": "2026-10-31",
-  "status": "deployed_by_pipeline; pending user functional acceptance and DNS update",
+  "status": "deployed_by_pipeline; DNS updated; manual order creation/view evidenced by user",
   "workflow": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41270677490",
   "workflow_status": "success",
   "deployment_commit": "dd6db57da240c03af4989809a27ec21dad4f6607",
@@ -31,8 +31,17 @@
     "url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41270567825",
     "result": "success; compilation, Terraform, nine release identity checks"
   },
-  "dns_changed": false,
-  "functional_tests": "none performed; pending user",
+  "dns_changed": true,
+  "functional_tests": {
+    "performed_by": "user",
+    "create_and_view_order": "passed; screenshot supplied in chat",
+    "order_id": 1,
+    "url": "https://dev.miguelinfra.com/pedido/1",
+    "local_date": "2026-10-31",
+    "scope": "manual order creation and viewing only",
+    "restart_persistence": "not tested",
+    "automated_functional_tests": "none performed"
+  },
   "replicas": [
     {
       "pod": "abuelito-7df89769d6-9nlrd",
@@ -62,13 +71,14 @@
       "prisma/migrations/20260428165508_add_retailguard_ai/migration.sql": "7e4fe8952bd99348aa571da53dd5f7c780403cf3f98b82aaf5d99370d3470624"
     },
     "historical_acceptance": "user created/viewed orders locally and in prior AWS deployment on 2026-10-29",
-    "functional_acceptance_current_environment": "pending_user",
+    "functional_acceptance_current_environment": "manual order creation/view evidenced by user 2026-10-31",
     "deployment_commit": "dd6db57da240c03af4989809a27ec21dad4f6607",
     "environment": "dev",
     "migration_job": "abuelito-migrate-41270677490-1",
     "deployment_status": "ready",
-    "functional_acceptance": "pending_user"
+    "functional_acceptance": "manual order creation/view only; no restart or failover test"
   },
-  "dns_current_cname": "abuelito-eks-1987555837.us-east-1.elb.amazonaws.com",
-  "dns_required_cname": "abuelito-eks-1554744511.us-east-1.elb.amazonaws.com"
+  "dns_current_cname": "abuelito-eks-1554744511.us-east-1.elb.amazonaws.com",
+  "dns_required_cname": "abuelito-eks-1554744511.us-east-1.elb.amazonaws.com",
+  "dns_changed_by": "user; CNAME verified via DNS"
 }

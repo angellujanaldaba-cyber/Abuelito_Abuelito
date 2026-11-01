@@ -47,6 +47,26 @@ Esperar a que la instancia aparezca en Systems Manager > Session Manager.
 Abrir una sesion y ejecutar `sudo cloud-init status --wait` antes del registro.
 Si falla la preparacion, revisar /var/log/cloud-init-output.log; no registrar.
 
+## Registro automatizado por sesion interactiva
+
+Alternativa al registro manual: desde la Mac con AWS CLI, gh autenticado y
+session-manager-plugin instalado, ejecutar desde la raiz:
+
+```sh
+python3 deploy/scripts/register_runner.py --instance-id ID_REAL
+```
+
+Valida cuenta, etiquetas, ARM64, VPC y ausencia de IP publica. Genera el token
+solo cuando aparece el prompt oculto; lo mantiene en memoria y lo envia por
+SSM interactivo. No usa SendCommand ni registra el token en sus parametros.
+No imprime el token ni lo escribe en disco. Si el plugin esta fuera de PATH,
+agregar --plugin-bin DIRECTORIO_DEL_PLUGIN.
+
+El workflow manual runner-check.yml comprueba ARM64, OIDC, DNS/TLS privado de
+EKS y permiso de lectura de Deployments. Requiere aprobacion dev-deploy; no
+crea pedidos ni despliega la aplicacion. Consume el unico job de la instancia:
+al terminar el chequeo, la instancia se elimina. Crear otra para un Deploy real.
+
 ## Registrar sin claves permanentes
 
 En la Mac, iniciar sesion gh como propietario del repo y copiar un token temporal:

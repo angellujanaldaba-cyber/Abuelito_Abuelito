@@ -1,0 +1,50 @@
+name: Check private EKS runner
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: application-dev
+  cancel-in-progress: false
+jobs:
+  connection:
+    if: github.repository == 'angellujanaldaba-cyber/Abuelito_Abuelito' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, ARM64, abuelito-dev]
+    timeout-minutes: 5
+    environment: dev-deploy
+    steps:
+      - name: Confirm runner architecture
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = aarch64
+          python3 --version
+          gh --version
+          kubectl version --client
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+          allowed-account-ids: '455982475279'
+      - name: Verify private EKS TLS connection
+        run: |
+          python3 - <<'PY'
+          import base64, ipaddress, json, socket, ssl, subprocess
+          from urllib.parse import urlsplit
+          cluster=json.loads(subprocess.check_output(['aws','eks','describe-cluster','--name','abuelito-eks','--region','us-east-1']))['cluster']
+          assert cluster['status']=='ACTIVE', 'EKS no esta activo'
+          host=urlsplit(cluster['endpoint']).hostname
+          addresses=socket.getaddrinfo(host,443,type=socket.SOCK_STREAM)
+          assert addresses and all(ipaddress.ip_address(a[4][0]).is_private for a in addresses), 'El API no resolvio a IP privada'
+          context=ssl.create_default_context(cadata=base64.b64decode(cluster['certificateAuthority']['data']).decode())
+          with socket.create_connection((host,443),timeout=15) as connection:
+              with context.wrap_socket(connection,server_hostname=host) as tls:
+                  print('API EKS privado: DNS y certificado TLS verificados; '+tls.version())
+          PY
+      - name: Verify scoped Kubernetes permission
+        run: |
+          set -euo pipefail
+          export KUBECONFIG="$RUNNER_TEMP/runner-check-kubeconfig"
+          trap 'rm -f "$KUBECONFIG"' EXIT
+          aws eks update-kubeconfig --name abuelito-eks --region us-east-1 --kubeconfig "$KUBECONFIG"
+          kubectl --request-timeout=20s auth can-i get deployments --namespace abuelito

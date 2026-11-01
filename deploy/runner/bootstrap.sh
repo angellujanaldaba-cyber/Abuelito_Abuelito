@@ -21,6 +21,7 @@ install -m 0755 /tmp/kubectl /usr/local/bin/kubectl
 curl --fail --location --retry 3 https://github.com/actions/runner/releases/download/v2.338.2/actions-runner-linux-arm64-2.338.2.tar.gz -o /tmp/runner.tar.gz
 printf '%s  /tmp/runner.tar.gz\n' '670adb2f268fe21dcbb58b3db0e0aa9d5b3bddfe2c651481336e561ff86de945' | sha256sum --check
 tar -xzf /tmp/runner.tar.gz -C /opt/actions-runner
+/opt/actions-runner/bin/installdependencies.sh
 chown -R runner:runner /opt/actions-runner
 cat > /etc/systemd/system/abuelito-runner.service <<'UNIT'
 [Unit]

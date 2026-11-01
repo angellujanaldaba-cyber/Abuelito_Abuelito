@@ -1,0 +1,58 @@
+name: Recover historically validated Abuelito images
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Escribir RECOVER abuelito-prueba-001
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: application-dev
+  cancel-in-progress: false
+jobs:
+  recover:
+    if: github.repository == 'angellujanaldaba-cyber/Abuelito_Abuelito' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, ARM64, abuelito-dev]
+    timeout-minutes: 30
+    environment: dev-deploy
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Prepare historically identified release
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          if os.environ['CONFIRMATION']!='RECOVER abuelito-prueba-001': raise SystemExit('Confirmacion incorrecta')
+          release=json.loads(Path('deploy/records/recovery-release.json').read_text())
+          release['deployment_commit']=os.environ['GITHUB_SHA']
+          Path('release.json').write_text(json.dumps(release,indent=2)+'\n')
+          with open(os.environ['GITHUB_ENV'],'a') as env:
+              env.write('KUBECONFIG='+os.environ['RUNNER_TEMP']+'/abuelito-recovery-kubeconfig\n')
+          PY
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+          allowed-account-ids: '455982475279'
+      - run: python3 deploy/scripts/deploy_release.py --historical-recovery
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: recovered-release
+          path: deployment.json
+          retention-days: 90
+      - name: Remove temporary kubeconfig
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          value=os.environ.get('KUBECONFIG')
+          if value: Path(value).unlink(missing_ok=True)
+          PY

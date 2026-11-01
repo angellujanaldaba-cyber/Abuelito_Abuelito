@@ -113,3 +113,30 @@ El usuario hace las pruebas de catalogo, pedido y consulta; documentar su result
 
 Terraform: plan-destroy -> revisar -> apply-plan de ese mismo run. Conserva snapshot final. ECR force_delete sigue habilitado: guardar imagenes fuera del repo ECR antes de borrar el laboratorio.
 Los pipelines no borran snapshots ni el bucket remoto por su cuenta.
+
+## Recuperar las dos imagenes historicas aceptadas
+
+recover-validated.yml es una ruta manual especifica para abuelito-prueba-001;
+no reemplaza build-images.yml ni permite elegir otros digests. Usa
+ deploy/records/recovery-release.json, con las dos imagenes exactas y los hashes
+del esquema/cinco migraciones comprobados dentro del migrator. La imagen web
+historica no tiene un commit de origen demostrado: source_commit permanece null.
+deployment_commit identifica el codigo del procedimiento/manifiestos ejecutado
+en esta recuperacion; no atribuye la imagen antigua a ese commit.
+
+Un operador vuelve a publicar las mismas imagenes sin reconstruirlas. Luego ejecuta
+python3 deploy/scripts/bootstrap_database.py desde la Mac con identidad admin,
+contra el DbiResourceId registrado de la base nueva. Este bootstrap exige base
+vacia, crea abuelito_app/abuelito_migrator y privilegios por defecto, deja dos
+Secrets DATABASE_URL y elimina el secreto temporal de administrador. No crea
+pedidos ni aplica migraciones. No reintentar sobre un fallo parcial sin revisar.
+
+Crear y registrar un runner nuevo. En Actions ejecutar Recover historically
+validated Abuelito images con confirmation=RECOVER abuelito-prueba-001 y aprobar
+ dev-deploy. El Job aplica migraciones con el usuario dedicado, restringe la tabla
+_prisma_migrations y solo despues actualiza las dos replicas. La aplicacion usa
+el usuario de negocio, sin CREATE en public. Las pruebas funcionales las hace
+el usuario; su aprobacion anterior no certifica automaticamente esta base nueva.
+
+El DNS de Cloudflare debe actualizarse manualmente al ALB de la recuperacion,
+una vez revisado el despliegue. No se modifica mediante estos workflows.

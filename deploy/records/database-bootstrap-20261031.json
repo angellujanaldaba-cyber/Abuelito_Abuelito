@@ -1,0 +1,11 @@
+{
+  "database_resource_id": "db-TDIXR7WIATJNTZL7XQZDXFUWRE",
+  "endpoint": "abuelito-eks-db.caxyy48u4z9b.us-east-1.rds.amazonaws.com",
+  "name": "abuelito",
+  "bootstrap_job": "abuelito-roles-tdixr7wiatjntzl7xqzdxfuwre",
+  "application_user": "abuelito_app",
+  "migration_user": "abuelito_migrator",
+  "migrations": "pending deployment pipeline",
+  "credentials": "Kubernetes Secrets; no administrator credential retained",
+  "functional_tests": "user only; none performed"
+}

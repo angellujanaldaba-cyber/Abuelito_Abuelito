@@ -34,5 +34,31 @@ class ReleaseIdentityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_release(self.release)
 
+
+class HistoricalRecoveryTests(unittest.TestCase):
+    def setUp(self):
+        import json
+        from pathlib import Path
+        self.release = json.loads((Path(__file__).resolve().parents[1] / 'records/recovery-release.json').read_text())
+        self.release['deployment_commit'] = 'a' * 40
+
+    def test_exact_historical_pair_is_accepted(self):
+        from deploy_release import validate_historical_release
+        self.assertEqual(validate_historical_release(self.release), self.release)
+
+    def test_other_digest_cannot_be_used_as_historical(self):
+        from deploy_release import validate_historical_release
+        self.release['web_image'] = REPOSITORY + '@sha256:' + 'a' * 64
+        with self.assertRaises(ValueError): validate_historical_release(self.release)
+
+    def test_fabricated_image_source_commit_is_rejected(self):
+        from deploy_release import validate_historical_release
+        self.release['source_commit'] = 'a' * 40
+        with self.assertRaises(ValueError): validate_historical_release(self.release)
+        with self.assertRaises(ValueError): validate_release(self.release)
+
+    def test_historical_record_is_not_accepted_as_a_new_build(self):
+        with self.assertRaises((ValueError, TypeError)): validate_release(self.release)
+
 if __name__ == "__main__":
     unittest.main()

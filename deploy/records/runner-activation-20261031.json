@@ -3,8 +3,8 @@
   "authorization": "User approved recreating the reviewed 63-resource laboratory plan and activating private runner",
   "workload_plan_sha256": "b04800307664de8630ac0fc19a1d4a5c7966bebabe1aa3752048b7998feb4aea",
   "workload_status": "created; 63 resources added, 0 changed, 0 destroyed",
-  "runner_status": "registered_online_verified; temporary single-job instance",
-  "application_status": "not redeployed; no migrations or database users/secrets initialized",
+  "runner_status": "first runner terminated after successful check; replacement registered for recovery",
+  "application_status": "database roles/Secrets initialized; migrations and application deployment pending recovery pipeline",
   "snapshot_policy": "historical snapshot preserved; new database from empty per reviewed plan",
   "functional_tests": "user only; none performed",
   "runner": {
@@ -50,7 +50,7 @@
   ],
   "private_runner_check": {
     "run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41268962652",
-    "status": "waiting",
+    "status": "success",
     "checks": "architecture, OIDC, private DNS/TLS to EKS, Kubernetes scoped read permission; no application tests",
     "effect": "consumes the one job; runner terminates on completion"
   },
@@ -66,15 +66,21 @@
     "multi_az": true,
     "status": "available",
     "migrations": "not_applied_on_this_new_instance",
-    "application_users_and_secrets": "not_initialized"
+    "application_users_and_secrets": "initialized; see database-bootstrap-20261031.json"
   },
   "addons": {
     "eks-pod-identity-agent": "ACTIVE",
     "amazon-cloudwatch-observability": "ACTIVE"
   },
-  "images": "historical accepted digests retained in aws-images.json; not published to the recreated ECR yet",
+  "images": "original two digests republished unchanged; recovery-release.json",
   "final_terraform_checks": {
     "workload": "no changes",
     "runner": "no changes"
+  },
+  "deployment_runner": {
+    "instance_id": "i-0231b8926a15345f8",
+    "github_runner_id": 22,
+    "status_at_verification": "online",
+    "ephemeral": true
   }
 }

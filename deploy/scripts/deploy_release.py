@@ -11,6 +11,8 @@ import time
 REPOSITORY = "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web"
 
 def validate_release(release):
+    if release.get("release_type") == "historical-recovery":
+        raise ValueError("La imagen historica requiere su workflow de recuperacion explicito")
     if not re.fullmatch(r"[a-f0-9]{40}", release.get("source_commit", "")):
         raise ValueError("Commit de release invalido")
     if release.get("architecture") != "linux/arm64":
@@ -22,8 +24,31 @@ def validate_release(release):
         raise ValueError("Falta identificar esquema y migraciones")
     return release
 
+def validate_historical_release(release):
+    """Ruta explicita de recuperacion; nunca atribuir el binario antiguo a un commit nuevo."""
+    if (release.get("release_type") != "historical-recovery"
+            or release.get("source_test") != "abuelito-prueba-001"
+            or release.get("source_commit") is not None
+            or not re.fullmatch(r"[a-f0-9]{40}", release.get("deployment_commit", ""))):
+        raise ValueError("Identidad historica invalida")
+    expected = {
+        "web_image": REPOSITORY + "@sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb",
+        "migrator_image": REPOSITORY + "@sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2",
+    }
+    if any(release.get(k) != v for k, v in expected.items()):
+        raise ValueError("Esta recuperacion solo admite los dos digests historicos validados")
+    if release.get("architecture") != "linux/arm64" or not release.get("prisma_files_sha256"):
+        raise ValueError("Arquitectura/migraciones historicas invalidas")
+    return release
+
 def main():
-    release = validate_release(json.loads(Path("release.json").read_text()))
+    raw = json.loads(Path("release.json").read_text())
+    if sys.argv[1:] == ["--historical-recovery"]:
+        release = validate_historical_release(raw)
+    elif sys.argv[1:]:
+        raise SystemExit("Argumentos no reconocidos")
+    else:
+        release = validate_release(raw)
     import hashlib
     for name, expected in release["prisma_files_sha256"].items():
         path = Path(name)
@@ -48,9 +73,14 @@ def main():
            "metadata": {"name": job_name, "namespace": "abuelito"},
            "spec": {"backoffLimit": 0, "activeDeadlineSeconds": 600,
                     "ttlSecondsAfterFinished": 86400, "template": {"spec": {
-                        "restartPolicy": "Never", "nodeSelector": {"kubernetes.io/arch": "arm64"},
+                        "restartPolicy": "Never", "automountServiceAccountToken": False, "nodeSelector": {"kubernetes.io/arch": "arm64"},
                         "containers": [{"name": "migrator", "image": release["migrator_image"],
-                                        "env": [{"name": "DATABASE_URL", "valueFrom": {
+                                        "command": ["sh", "-c", "npx prisma migrate deploy && node -e \"$AFTER_MIGRATION_JS\""],
+                                        "env": [{"name": "AFTER_MIGRATION_JS", "value":
+                                                 "const {PrismaClient}=require('@prisma/client');const db=new PrismaClient();"
+                                                 "db.$executeRawUnsafe('REVOKE ALL ON TABLE public._prisma_migrations FROM abuelito_app')"
+                                                 ".then(()=>console.log('Migration metadata restricted')).catch(()=>{console.error('Permission cleanup failed');process.exitCode=1}).finally(()=>db.$disconnect());"},
+                                                {"name": "DATABASE_URL", "valueFrom": {
                                             "secretKeyRef": {"name": "abuelito-migration-config", "key": "DATABASE_URL"}}}],
                                         "resources": {"requests": {"cpu": "100m", "memory": "256Mi"},
                                                       "limits": {"cpu": "1", "memory": "512Mi"}}}]}}}}

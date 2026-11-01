@@ -1,16 +1,26 @@
 {
   "date": "2026-10-31",
-  "status": "prepared_awaiting_dev_deploy_human_review",
+  "status": "deployed_by_pipeline; pending user functional acceptance and DNS update",
   "workflow": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41270677490",
-  "workflow_status": "waiting",
+  "workflow_status": "success",
   "deployment_commit": "dd6db57da240c03af4989809a27ec21dad4f6607",
   "image_source_commit": null,
   "release_identity": "deploy/records/recovery-release.json",
   "images": "original accepted ARM64 digests republished and remotely verified; not rebuilt",
   "database": "deploy/records/database-bootstrap-20261031.json",
   "bootstrap": "completed; dedicated app/migrator users and Secrets; temporary admin Secret removed",
-  "migrations": "pending recovery pipeline",
-  "application": "not redeployed yet",
+  "migrations": {
+    "job": "abuelito-migrate-41270677490-1",
+    "applied": [
+      "20251124192018_init_models",
+      "20251125014541_fix_models",
+      "20251125175711_init_pedidos",
+      "20251126063834_add_usuario_relacion",
+      "20260428165508_add_retailguard_ai"
+    ],
+    "status": "succeeded"
+  },
+  "application": "two ready replicas, one per zone; both ALB targets healthy",
   "runner": {
     "instance_id": "i-0231b8926a15345f8",
     "github_runner_id": 22,
@@ -22,5 +32,43 @@
     "result": "success; compilation, Terraform, nine release identity checks"
   },
   "dns_changed": false,
-  "functional_tests": "none performed; user tests after rollout"
+  "functional_tests": "none performed; pending user",
+  "replicas": [
+    {
+      "pod": "abuelito-7df89769d6-9nlrd",
+      "zone": "us-east-1a",
+      "ready": true
+    },
+    {
+      "pod": "abuelito-7df89769d6-gddlp",
+      "zone": "us-east-1b",
+      "ready": true
+    }
+  ],
+  "release": {
+    "release_type": "historical-recovery",
+    "source_test": "abuelito-prueba-001",
+    "source_commit": null,
+    "source_commit_status": "not demonstrated for historical image; do not invent a Git commit",
+    "architecture": "linux/arm64",
+    "web_image": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:6d91eb6c630d2a8f582de6d685f2530bb3d8f5078826d625bd84a7fb04f50ccb",
+    "migrator_image": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:0ffe8e2c0e4688be40076b0556fd6a7f5b0a1bcb4f3476b80221000fc9ddceb2",
+    "prisma_files_sha256": {
+      "prisma/schema.prisma": "394dd9d67c607e45be1f9098d66458bb8188865ad27a5cccde7e5c4f4015aeb0",
+      "prisma/migrations/20251124192018_init_models/migration.sql": "928386a7a3a53125e11457844fdfbd7eae81bb5a43b9162eae06602d21458fb4",
+      "prisma/migrations/20251125014541_fix_models/migration.sql": "ed219c360dff36dbb57b03a897c54bf25d3e4dc3ea3664cb0f2fbae06c7aee0d",
+      "prisma/migrations/20251125175711_init_pedidos/migration.sql": "393fbabf09197ebe453fae02453b9a086e60155fa1ef0fe1cbaaea70fdbf30ca",
+      "prisma/migrations/20251126063834_add_usuario_relacion/migration.sql": "e450c52c98d55f7d918b31acdd38782552bac28387380d43af3a9a35f63345d6",
+      "prisma/migrations/20260428165508_add_retailguard_ai/migration.sql": "7e4fe8952bd99348aa571da53dd5f7c780403cf3f98b82aaf5d99370d3470624"
+    },
+    "historical_acceptance": "user created/viewed orders locally and in prior AWS deployment on 2026-10-29",
+    "functional_acceptance_current_environment": "pending_user",
+    "deployment_commit": "dd6db57da240c03af4989809a27ec21dad4f6607",
+    "environment": "dev",
+    "migration_job": "abuelito-migrate-41270677490-1",
+    "deployment_status": "ready",
+    "functional_acceptance": "pending_user"
+  },
+  "dns_current_cname": "abuelito-eks-1987555837.us-east-1.elb.amazonaws.com",
+  "dns_required_cname": "abuelito-eks-1554744511.us-east-1.elb.amazonaws.com"
 }

@@ -30,3 +30,12 @@ output "node_role_arn" {
 output "configure_kubectl" {
   value = "aws eks update-kubeconfig --region us-east-1 --name ${aws_eks_cluster.main.name}"
 }
+
+# Red para el runner privado, administrado en un state separado.
+output "runner_network" {
+  value = {
+    vpc_id                    = aws_vpc.main.id
+    private_subnet_id         = aws_subnet.private["a"].id
+    cluster_security_group_id = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  }
+}

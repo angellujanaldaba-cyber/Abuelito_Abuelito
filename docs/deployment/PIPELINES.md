@@ -95,6 +95,8 @@ Un operador debe preparar inicialmente esos usuarios, permisos y secretos desde 
 La creacion de esos usuarios no se automatiza con el rol CI ni se copian passwords al repositorio.
 Los scripts manuales originales del chat no son el pipeline generico: tienen bootstrap y nombres historicos. No usarlos ciegamente para sucesivas versiones.
 
+Configuracion del runner de un solo uso preparada en deploy/runner/README.md: requiere primero recrear la red del laboratorio. No hay runner online todavia. Destruir deploy/runner antes de EKS/VPC para retirar su regla de acceso.
+
 El job deploy necesita runner dedicado Linux ARM64 con labels self-hosted, linux, ARM64, abuelito-dev; herramientas python3, AWS CLI, kubectl y gh; acceso privado a EKS y salida a GitHub.
 No abrir el API de EKS a 0.0.0.0/0 para runners compartidos. No ejecutar pull requests no confiables en ese runner.
 

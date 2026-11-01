@@ -19,8 +19,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.repository == 'angellujanaldaba-cyber/Abuelito_Abuelito' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, linux, ARM64, abuelito-dev]
+    timeout-minutes: 30
     environment: dev-deploy
     env:
       GH_TOKEN: ${{ github.token }}

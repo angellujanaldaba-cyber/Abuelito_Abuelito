@@ -24,10 +24,10 @@
   "oidc_connection": {
     "build": "success",
     "run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41263387319",
-    "infrastructure": "awaiting environment human review",
+    "infrastructure": "success",
     "infrastructure_run_url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41263432028"
   },
-  "private_runner": "not_configured",
+  "private_runner": "configuration prepared in deploy/runner; no instance created; requires EKS network",
   "workload_status": "destroyed; not recreated during bootstrap",
   "snapshot_preserved": "abuelito-eks-final-20261029",
   "functional_tests": "user only; none performed",

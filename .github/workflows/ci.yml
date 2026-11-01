@@ -40,4 +40,8 @@ jobs:
       - run: terraform -chdir=deploy/bootstrap fmt -check
       - run: terraform -chdir=deploy/bootstrap init -backend=false -input=false
       - run: terraform -chdir=deploy/bootstrap validate -no-color
+      - run: terraform -chdir=deploy/runner fmt -check
+      - run: terraform -chdir=deploy/runner init -backend=false -input=false
+      - run: terraform -chdir=deploy/runner validate -no-color
+      - run: bash -n deploy/runner/bootstrap.sh deploy/runner/register.sh
       - run: python3 -m unittest discover -s deploy/scripts -p 'test_*.py'

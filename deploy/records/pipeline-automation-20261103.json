@@ -36,7 +36,12 @@
     "unit_security_checks": 21,
     "terraform": "workload/bootstrap validate passed; runner legacy retained",
     "workflow_syntax": "actionlint 1.7.12 passed",
-    "iam": "nine policies checked by AWS Access Analyzer without findings"
+    "iam": "nine policies checked by AWS Access Analyzer without findings",
+    "github_ci": {
+      "url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41742142261",
+      "status": "success",
+      "source_commit": "051bb0c5d91b74faf5057b1e685d33a2fd9e968f"
+    }
   },
   "github_configuration": "dev-plan/build/infrastructure/deploy/dns environments and variables configured; reviewer rules preserved",
   "dns_automation_ready": false,

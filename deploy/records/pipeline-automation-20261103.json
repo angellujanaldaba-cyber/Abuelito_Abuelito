@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-03",
+  "status": "implemented; static validation and preview plans passed; runtime AWS cycle NOT executed",
+  "coordinator": ".github/workflows/deploy-all.yml",
+  "destroy": ".github/workflows/destroy-all.yml",
+  "execution": "two temporary ARM64 CodeBuild projects in private VPC; replaces manually registered EC2 runners in new flow",
+  "stages": [
+    "CI validation",
+    "read-only infrastructure plan",
+    "human-reviewed exact plan apply",
+    "web/migrator images from same commit",
+    "private PostgreSQL users and Secrets bootstrap",
+    "private migrations and deployment",
+    "optional Cloudflare DNS after healthy ALB"
+  ],
+  "cloud_resources_created_during_task": false,
+  "terraform_apply_executed": false,
+  "start_build_executed": false,
+  "preview_plans": {
+    "bootstrap": {
+      "create": 20,
+      "change": 0,
+      "destroy": 0,
+      "applied": false,
+      "sha256": "87d0a9f39f12c953c7f7f9496c2195fbc23edc735809884875727cf6f8b98de4"
+    },
+    "terraform": {
+      "create": 76,
+      "change": 0,
+      "destroy": 0,
+      "applied": false,
+      "sha256": "c5bd5bb80684fbc19647231661af0b396ba367a8a88df2e3e440fb23467a2536"
+    }
+  },
+  "validation": {
+    "unit_security_checks": 21,
+    "terraform": "workload/bootstrap validate passed; runner legacy retained",
+    "workflow_syntax": "actionlint 1.7.12 passed",
+    "iam": "nine policies checked by AWS Access Analyzer without findings"
+  },
+  "github_configuration": "dev-plan/build/infrastructure/deploy/dns environments and variables configured; reviewer rules preserved",
+  "dns_automation_ready": false,
+  "remaining_initial_setup": [
+    "review and apply bootstrap IAM/S3 using existing administrator identity",
+    "configure Cloudflare DNS edit token and zone ID once if automatic DNS requested"
+  ],
+  "runtime_validation_pending": [
+    "full creation through coordinator",
+    "PostgreSQL bootstrap/migrations through private CodeBuild",
+    "application rollout and DNS through coordinator",
+    "normal destroy through pipeline"
+  ],
+  "manual_acceptance": "user tests orders; no automated functional tests performed",
+  "historical_release": "unchanged; source commit of old binaries not invented",
+  "destroy_policy": "normal pipeline preserves bootstrap IAM/S3 and final RDS snapshot; full CI-foundation removal is separate administrative operation",
+  "preexisting_user_change": "deploy/terraform/ci-access.tf description left unchanged and excluded from commit"
+}

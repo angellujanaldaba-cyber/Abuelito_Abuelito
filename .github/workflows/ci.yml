@@ -1,11 +1,12 @@
 name: Validate application and infrastructure
 on:
+  workflow_call:
   push:
   pull_request:
 permissions:
   contents: read
 concurrency:
-  group: validate-${{ github.ref }}
+  group: validate-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   application:
@@ -43,5 +44,6 @@ jobs:
       - run: terraform -chdir=deploy/runner fmt -check
       - run: terraform -chdir=deploy/runner init -backend=false -input=false
       - run: terraform -chdir=deploy/runner validate -no-color
-      - run: bash -n deploy/runner/bootstrap.sh deploy/runner/register.sh
+      - run: bash -n deploy/runner/bootstrap.sh deploy/runner/register.sh deploy/codebuild/run.sh
+      - run: python3 -m py_compile deploy/scripts/*.py deploy/codebuild/fetch_bundle.py
       - run: python3 -m unittest discover -s deploy/scripts -p 'test_*.py'

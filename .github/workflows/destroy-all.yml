@@ -1,0 +1,55 @@
+name: Destroy Abuelito workload (preserve CI foundation)
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Escribir DESTROY dev; conserva snapshot e IAM/S3 iniciales
+        required: true
+        type: string
+      remove_dns:
+        description: Eliminar solo el CNAME que apunte al ALB retirado
+        type: boolean
+        default: true
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: lifecycle-dev
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'angellujanaldaba-cyber/Abuelito_Abuelito' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: test "$CONFIRMATION" = 'DESTROY dev'
+  plan:
+    needs: preflight
+    uses: ./.github/workflows/infrastructure.yml
+    with:
+      operation: plan-destroy
+  apply:
+    needs: plan
+    uses: ./.github/workflows/infrastructure.yml
+    with:
+      operation: apply-plan
+      plan_run_id: ${{ github.run_id }}
+      confirmation: APPLY ${{ github.run_id }}
+      expected_plan_type: plan-destroy
+  dns:
+    needs: [plan, apply]
+    if: inputs.remove_dns && needs.plan.outputs.alb_dns != ''
+    runs-on: ubuntu-24.04
+    environment: dev-dns
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+          EXPECTED_ALB: ${{ needs.plan.outputs.alb_dns }}
+        run: python3 deploy/scripts/cloudflare_dns.py remove

@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import sys
 import subprocess
 import time
 from urllib.parse import quote, urlsplit
@@ -19,20 +20,29 @@ def aws(*args):
 
 
 def main():
-    expected = json.loads(REF.read_text())["database"]
+    pipeline = sys.argv[1:] == ["--pipeline"]
+    if sys.argv[1:] and not pipeline:
+        raise SystemExit("Argumentos invalidos")
+    expected = {"identifier": "abuelito-eks-db", "resource_id": os.environ["DB_RESOURCE_ID"]} if pipeline else json.loads(REF.read_text())["database"]
+    config = Path(os.environ["KUBECONFIG"]) if pipeline else KUBECONFIG
+    output = Path("bootstrap-result.json") if pipeline else ROOT / "deploy/records/database-bootstrap-20261031.json"
+    release = json.loads(Path("release.json").read_text()) if pipeline else None
+    if pipeline:
+        from deploy_release import validate_release
+        validate_release(release)
     if aws("sts", "get-caller-identity")["Account"] != "455982475279":
         raise SystemExit("Cuenta inesperada")
     db = aws("rds", "describe-db-instances", "--db-instance-identifier", expected["identifier"])["DBInstances"][0]
     if db["DbiResourceId"] != expected["resource_id"] or db["DBInstanceStatus"] != "available":
         raise SystemExit("RDS no corresponde a la instancia nueva registrada/disponible")
     host = db["Endpoint"]["Address"]
-    private = KUBECONFIG.parent
+    private = config.parent
     private.mkdir(mode=0o700, exist_ok=True)
     private.chmod(0o700)
     subprocess.run(["aws", "eks", "update-kubeconfig", "--name", "abuelito-eks", "--region", "us-east-1",
-                    "--kubeconfig", str(KUBECONFIG), "--alias", "abuelito-eks-dev"], check=True, stdout=subprocess.DEVNULL)
-    KUBECONFIG.chmod(0o600)
-    kube = ["kubectl", "--kubeconfig", str(KUBECONFIG), "-n", "abuelito"]
+                    "--kubeconfig", str(config), "--alias", "abuelito-eks-dev"], check=True, stdout=subprocess.DEVNULL)
+    config.chmod(0o600)
+    kube = ["kubectl", "--kubeconfig", str(config), "-n", "abuelito"]
 
     def apply(obj):
         # No imprimir JSON: Secret values solo se transmiten por stdin al API.
@@ -57,6 +67,10 @@ def main():
             if parsed.hostname != host or parsed.username != user or parsed.path != "/abuelito":
                 raise SystemExit("Secret existente no corresponde a la base/usuario esperado")
         subprocess.run(kube + ["delete", "secret", "abuelito-bootstrap-admin", "--ignore-not-found"], check=True)
+        record = {"database_resource_id": db["DbiResourceId"], "endpoint": host, "name": "abuelito",
+                  "engine": db["Engine"], "engine_version": db["EngineVersion"], "multi_az": db["MultiAZ"],
+                  "instance_created_at": db["InstanceCreateTime"], "bootstrap_job": job_name, "status": "already_initialized_and_verified", "credentials": "Kubernetes Secrets; no passwords in artifact"}
+        output.write_text(json.dumps(record, indent=2) + "\n")
         print("Bootstrap ya completado y Secrets verificados.")
         return
     # Si quedaron Secrets sin el Job, no rotar ni sobrescribir por suposicion.
@@ -91,7 +105,7 @@ const {PrismaClient}=require('@prisma/client');const db=new PrismaClient();
  console.log('Roles and default business privileges configured; database remains empty.');
 })().catch(()=>{console.error('Database bootstrap failed; inspect role state before retry.');process.exitCode=1}).finally(()=>db.$disconnect());
 """
-    image = json.loads((ROOT / "deploy/records/aws-images.json").read_text())["images"]["migrator"]["uri"]
+    image = release["migrator_image"] if pipeline else json.loads((ROOT / "deploy/records/aws-images.json").read_text())["images"]["migrator"]["uri"]
     apply({"apiVersion": "batch/v1", "kind": "Job", "metadata": {"name": job_name, "namespace": "abuelito"},
            "spec": {"backoffLimit": 0, "activeDeadlineSeconds": 300, "template": {"spec": {
                "restartPolicy": "Never", "automountServiceAccountToken": False,
@@ -112,9 +126,10 @@ const {PrismaClient}=require('@prisma/client');const db=new PrismaClient();
         secret("abuelito-config", {"DATABASE_URL": url("abuelito_app", app_password)})
         secret("abuelito-migration-config", {"DATABASE_URL": url("abuelito_migrator", migration_password)})
         record = {"database_resource_id": db["DbiResourceId"], "endpoint": host, "name": "abuelito", "bootstrap_job": job_name,
-                  "application_user": "abuelito_app", "migration_user": "abuelito_migrator", "migrations": "pending deployment pipeline",
+                  "engine": db["Engine"], "engine_version": db["EngineVersion"], "multi_az": db["MultiAZ"],
+                  "instance_created_at": db["InstanceCreateTime"], "application_user": "abuelito_app", "migration_user": "abuelito_migrator", "migrations": "pending deployment pipeline",
                   "credentials": "Kubernetes Secrets; no administrator credential retained", "functional_tests": "user only; none performed"}
-        (ROOT / "deploy/records/database-bootstrap-20261031.json").write_text(json.dumps(record, indent=2) + "\n")
+        output.write_text(json.dumps(record, indent=2) + "\n")
     finally:
         subprocess.run(kube + ["delete", "secret", "abuelito-bootstrap-admin", "--ignore-not-found"], check=True)
     print("Usuarios y Secrets listos; migraciones pendientes del pipeline.")

@@ -1,0 +1,83 @@
+name: Deploy complete Abuelito environment
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Escribir DEPLOY dev (infraestructura genera cargos)
+        required: true
+        type: string
+      publish_dns:
+        description: Actualizar dev.miguelinfra.com (configurar Cloudflare una vez)
+        type: boolean
+        default: true
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: lifecycle-dev
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'angellujanaldaba-cyber/Abuelito_Abuelito' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          DNS_REQUESTED: ${{ inputs.publish_dns }}
+          DNS_READY: ${{ vars.DNS_AUTOMATION_READY }}
+        run: |
+          test "$CONFIRMATION" = 'DEPLOY dev'
+          if [ "$DNS_REQUESTED" = 'true' ]; then
+            test "$DNS_READY" = 'true' || { echo 'Configura primero Cloudflare o desmarca publish_dns.'; exit 1; }
+          fi
+  validate:
+    needs: preflight
+    uses: ./.github/workflows/ci.yml
+  plan:
+    needs: validate
+    uses: ./.github/workflows/infrastructure.yml
+    with:
+      operation: plan
+  apply:
+    needs: plan
+    uses: ./.github/workflows/infrastructure.yml
+    with:
+      operation: apply-plan
+      plan_run_id: ${{ github.run_id }}
+      confirmation: APPLY ${{ github.run_id }}
+      expected_plan_type: plan
+  images:
+    needs: apply
+    uses: ./.github/workflows/build-images.yml
+    with:
+      source_sha: ${{ github.sha }}
+  database:
+    needs: images
+    uses: ./.github/workflows/private-execution.yml
+    with:
+      stage: bootstrap
+  deploy:
+    needs: database
+    uses: ./.github/workflows/private-execution.yml
+    with:
+      stage: deploy
+  dns:
+    needs: deploy
+    if: inputs.publish_dns
+    runs-on: ubuntu-24.04
+    environment: dev-dns
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: deploy-result
+          path: ${{ runner.temp }}/deployment
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+        run: python3 deploy/scripts/cloudflare_dns.py publish --result "$RUNNER_TEMP/deployment/deploy-result.json"

@@ -40,6 +40,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 La infraestructura vive en [deploy/terraform](deploy/terraform), los manifests en [deploy/kubernetes](deploy/kubernetes) y los registros historicos en [deploy/records](deploy/records).
 
-Leer [docs/deployment/PIPELINES.md](docs/deployment/PIPELINES.md) para configurar GitHub Actions, OIDC, backend remoto y ejecutor privado. Push ejecuta solo compilacion/validacion; construir imagenes, Terraform y deploy son manuales. Las pruebas funcionales las realiza el usuario.
+Leer [docs/deployment/PIPELINES.md](docs/deployment/PIPELINES.md) para configurar GitHub Actions, OIDC, backend remoto y ejecutor privado. Push ejecuta solo compilacion/validacion. El coordinador Deploy complete Abuelito environment prepara plan, aplica tras revision, construye imagenes y ejecuta base/deploy privados con CodeBuild. La implementacion nueva aun no se probo de punta a punta en AWS; consultar [PIPELINE-COMPLETO.md](docs/deployment/PIPELINE-COMPLETO.md). Las pruebas funcionales las realiza el usuario.
 
 El laboratorio AWS del 29 de octubre de 2026 fue destruido. La imagen historica validada esta registrada por digest; este codigo versionado no implica que un build nuevo sea identico a esa imagen. Los respaldos Docker y los datos privados permanecen fuera de Git. El script YOLO es una herramienta local separada; los pesos, entorno Python y evidencias generadas no se versionan aqui ni se ejecutan en los pipelines web.

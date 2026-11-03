@@ -19,6 +19,14 @@ def required(name):
         raise SystemExit("Falta configurar " + name)
     return value
 
+def validate_plan_metadata(metadata, commit, plan_run, digest, expected_type):
+    expected = {"schema": 1, "account": "455982475279", "region": "us-east-1",
+                "state_key": "abuelito/dev/terraform.tfstate", "commit": commit,
+                "run_id": plan_run, "operation": expected_type, "sha256": digest}
+    if expected_type not in ("plan", "plan-destroy") or any(metadata.get(k) != v for k, v in expected.items()):
+        raise ValueError("Identidad, destino, tipo o integridad de plan invalida")
+    return metadata
+
 def main():
     operation = required("OPERATION")
     if operation not in ("plan", "plan-destroy", "apply-plan"):
@@ -45,14 +53,23 @@ def main():
     required("TF_VAR_acm_certificate_arn")
     if not os.environ.get("TF_VAR_ci_deploy_role_arn"):
         os.environ.pop("TF_VAR_ci_deploy_role_arn", None)
+    if os.environ.get("TF_WORKSPACE", "default") not in ("", "default"):
+        raise SystemExit("Este flujo solo administra el workspace default")
     os.environ["TF_IN_AUTOMATION"] = "1"
     tf = ["terraform", "-chdir=deploy/terraform"]
     run(tf + ["init", "-input=false", "-reconfigure",
               "-backend-config=bucket=" + bucket,
               "-backend-config=key=abuelito/dev/terraform.tfstate",
               "-backend-config=region=us-east-1", "-backend-config=encrypt=true",
-              "-backend-config=use_lockfile=true"])
+              "-backend-config=use_lockfile=true", "-backend-config=workspace_key_prefix=abuelito/dev/workspaces"])
     run(tf + ["validate", "-no-color"])
+    outputs = json.loads(subprocess.check_output(tf + ["output", "-json"]))
+    alb_dns = outputs.get("cloudflare_cname_target", {}).get("value", "")
+    if alb_dns and not re.fullmatch(r"abuelito-eks-[a-z0-9-]+\.us-east-1\.elb\.amazonaws\.com", alb_dns):
+        raise SystemExit("Destino ALB inesperado")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as file:
+            file.write("alb_dns=" + alb_dns + "\n")
     with tempfile.TemporaryDirectory(prefix="abuelito-plan-") as temporary:
         directory = Path(temporary)
         binary = directory / "plan.tfplan"
@@ -63,7 +80,8 @@ def main():
             if operation == "plan-destroy":
                 args.append("-destroy")
             run(args)
-            metadata = {"commit": commit, "run_id": run_id, "operation": operation,
+            metadata = {"schema": 1, "account": "455982475279", "region": "us-east-1",
+                        "state_key": "abuelito/dev/terraform.tfstate", "commit": commit, "run_id": run_id, "operation": operation,
                         "sha256": hashlib.sha256(binary.read_bytes()).hexdigest()}
             metadata_path.write_text(json.dumps(metadata))
             prefix = "s3://" + bucket + "/plans/dev/" + run_id + "/" + commit + "/"
@@ -80,11 +98,17 @@ def main():
             for file in (binary, metadata_path):
                 run(["aws", "s3", "cp", prefix + file.name, str(file)])
             metadata = json.loads(metadata_path.read_text())
-            if (metadata["commit"] != commit or metadata["run_id"] != plan_run
-                    or metadata["operation"] not in ("plan", "plan-destroy")
-                    or metadata["sha256"] != hashlib.sha256(binary.read_bytes()).hexdigest()):
-                raise SystemExit("Identidad o integridad de plan invalida")
+            validate_plan_metadata(metadata, commit, plan_run, hashlib.sha256(binary.read_bytes()).hexdigest(),
+                                   os.environ.get("EXPECTED_PLAN_TYPE") or "plan")
             run(tf + ["apply", "-input=false", "-no-color", str(binary)])
+            if metadata["operation"] == "plan-destroy":
+                # El addon puede crear este grupo fuera del state de Terraform.
+                groups = json.loads(subprocess.check_output(["aws", "logs", "describe-log-groups",
+                    "--log-group-name-prefix", "/aws/containerinsights/abuelito-eks/performance",
+                    "--region", "us-east-1"]))["logGroups"]
+                if any(g["logGroupName"] == "/aws/containerinsights/abuelito-eks/performance" for g in groups):
+                    run(["aws", "logs", "delete-log-group", "--log-group-name",
+                         "/aws/containerinsights/abuelito-eks/performance", "--region", "us-east-1"])
 
 if __name__ == "__main__":
     main()

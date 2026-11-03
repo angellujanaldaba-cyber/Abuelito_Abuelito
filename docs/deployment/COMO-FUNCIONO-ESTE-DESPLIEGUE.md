@@ -1,5 +1,9 @@
 # Como funciono el despliegue de Abuelito
 
+Este documento describe la ejecucion comprobada del 31 de octubre. La propuesta
+automatizada posterior esta en PIPELINE-COMPLETO.md; aun no tiene prueba real
+de creacion y destruccion en AWS.
+
 El entorno se valido el 31 de octubre de 2026: el usuario creo y consulto el
 pedido 1 en https://dev.miguelinfra.com/pedido/1. Despues solicito retirar los
 recursos. Consultar el registro de destruccion para saber que sigue existiendo;

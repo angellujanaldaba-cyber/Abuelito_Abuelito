@@ -65,7 +65,7 @@ resource "aws_iam_role_policy" "pipeline" {
       { Effect = "Allow", Action = ["rds:DescribeDBInstances"], Resource = aws_db_instance.app.arn },
       { Effect = "Allow", Action = ["secretsmanager:GetSecretValue"], Resource = aws_db_instance.app.master_user_secret[0].secret_arn }
       ] : [
-      { Effect = "Allow", Action = ["elasticloadbalancing:DescribeTargetHealth"], Resource = aws_lb_target_group.app.arn }
+      { Effect = "Allow", Action = ["elasticloadbalancing:DescribeTargetHealth"], Resource = "*", Condition = { StringEquals = { "aws:RequestedRegion" = "us-east-1" } } }
     ])
   })
 }

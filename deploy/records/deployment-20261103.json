@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-03",
+  "status": "pipeline_success; manual DNS and functional acceptance pending",
+  "authorization": "User authorized real AWS deployment and charges in chat; chose manual Cloudflare CNAME update",
+  "commit": "966140acb0f646eec6a8ccef36c2641c0ff8d7a0",
+  "run_id": 41765441114,
+  "url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41765441114",
+  "bootstrap": {
+    "created": 20,
+    "state": "new state migrated to S3 abuelito/bootstrap/terraform.tfstate",
+    "directory": ".private/deployment-20261103/bootstrap"
+  },
+  "workload_plan": {
+    "create": 76,
+    "change": 0,
+    "destroy": 0,
+    "applied": true,
+    "postgres": "16.15",
+    "multi_az": true,
+    "nodes": 2,
+    "nat_gateways": 2
+  },
+  "validation": "preflight, application CI, Terraform CI and plan succeeded",
+  "dns": "manual user update after deployment; publish_dns=false",
+  "functional_acceptance": "pending user; no orders created",
+  "admin_cidr": "177.245.179.107/32",
+  "previous_attempt": {
+    "run_id": 41760305283,
+    "result": "failed after partial apply",
+    "reason": "Auto Scaling attachment ARN used colon instead of slash after autoScalingGroupName",
+    "managed_instances_in_remote_state": 74
+  },
+  "bootstrap_fix": {
+    "updated": 1,
+    "created": 0,
+    "destroyed": 0,
+    "reason": "correct ARN separator; same limited EKS ASG scope"
+  },
+  "application": {
+    "source_commit": "966140acb0f646eec6a8ccef36c2641c0ff8d7a0",
+    "architecture": "linux/arm64",
+    "web_image": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:a2e031d84db64c7f6ca41442c15be944a8e70f1dbf0267f9961d4df90076f09c",
+    "migrator_image": "455982475279.dkr.ecr.us-east-1.amazonaws.com/abuelito-eks-web@sha256:a98ceeb6491a5068575e262405a678ef1f492c8cd2ed880b3da645c6ec0e3712",
+    "prisma_files_sha256": {
+      "prisma/migrations/20251124192018_init_models/migration.sql": "928386a7a3a53125e11457844fdfbd7eae81bb5a43b9162eae06602d21458fb4",
+      "prisma/migrations/20251125014541_fix_models/migration.sql": "ed219c360dff36dbb57b03a897c54bf25d3e4dc3ea3664cb0f2fbae06c7aee0d",
+      "prisma/migrations/20251125175711_init_pedidos/migration.sql": "393fbabf09197ebe453fae02453b9a086e60155fa1ef0fe1cbaaea70fdbf30ca",
+      "prisma/migrations/20251126063834_add_usuario_relacion/migration.sql": "e450c52c98d55f7d918b31acdd38782552bac28387380d43af3a9a35f63345d6",
+      "prisma/migrations/20260428165508_add_retailguard_ai/migration.sql": "7e4fe8952bd99348aa571da53dd5f7c780403cf3f98b82aaf5d99370d3470624",
+      "prisma/migrations/migration_lock.toml": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900",
+      "prisma/schema.prisma": "394dd9d67c607e45be1f9098d66458bb8188865ad27a5cccde7e5c4f4015aeb0"
+    },
+    "deployment_status": "ready",
+    "functional_acceptance": "pending_user",
+    "environment": "dev",
+    "migration_job": "abuelito-migrate-41765441114-2",
+    "alb_targets": "healthy",
+    "alb_dns_name": "abuelito-eks-1471038798.us-east-1.elb.amazonaws.com",
+    "stage": "deploy",
+    "run_id": "41765441114",
+    "codebuild_id": "abuelito-eks-deploy:82507a60-1d0a-408c-ba5f-cfb9803af724"
+  },
+  "health_read_fix": {
+    "reason": "DescribeTargetHealth does not support resource ARN restriction; limited read action to us-east-1",
+    "terraform_commit": "167539919abd9f1efac7801cf52e893f6f588589",
+    "plan_run": 41768993792,
+    "create": 0,
+    "change": 3,
+    "destroy": 0,
+    "resume": "after apply rerun failed job of 41765441114; preserve release image pair",
+    "apply_run": 41769632028,
+    "applied": true
+  },
+  "database": {
+    "database_resource_id": "db-6HLYYKMOFCQTP4LJME2DBSVMEM",
+    "endpoint": "abuelito-eks-db.caxyy48u4z9b.us-east-1.rds.amazonaws.com",
+    "name": "abuelito",
+    "bootstrap_job": "abuelito-roles-6hlyykmofcqtp4ljme2dbsvmem",
+    "engine": "postgres",
+    "engine_version": "16.15",
+    "multi_az": true,
+    "instance_created_at": "2026-11-04T02:51:49.548000+00:00",
+    "application_user": "abuelito_app",
+    "migration_user": "abuelito_migrator",
+    "migrations": "completed by deployment pipeline; supersedes earlier bootstrap-stage pending",
+    "credentials": "Kubernetes Secrets; no administrator credential retained",
+    "functional_tests": "user only; none performed",
+    "stage": "bootstrap",
+    "source_commit": "966140acb0f646eec6a8ccef36c2641c0ff8d7a0",
+    "run_id": "41765441114",
+    "codebuild_id": "abuelito-eks-bootstrap:760ac894-929f-4811-93db-f553bf444584",
+    "functional_acceptance": "pending_user"
+  },
+  "attempt": 2,
+  "runtime_validation": "creation, build, database bootstrap, migrations, rollout, target health passed after documented fixes; destroy not tested"
+}

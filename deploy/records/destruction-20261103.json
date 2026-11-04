@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-03",
+  "authorization": "User explicitly requested destruction through pipeline",
+  "run_id": 41775808425,
+  "url": "https://github.com/angellujanaldaba-cyber/Abuelito_Abuelito/actions/runs/41775808425",
+  "commit": "f448e5b681dc4eb5e534d7af1bbfc41d5b64521a",
+  "status": "pipeline_success; workload destroyed and AWS absence verified",
+  "plan": {
+    "create": 0,
+    "change": 0,
+    "destroy": 76
+  },
+  "preserved": [
+    "20 bootstrap IAM/S3 Terraform components",
+    "RDS snapshots including abuelito-eks-final-41768993792",
+    "shared ACM/OIDC",
+    "Git source and deployment records"
+  ],
+  "snapshot_expected_from_plan": "abuelito-eks-final-41768993792",
+  "dns": "manual CNAME still points to deleted ALB unless user removes it",
+  "images": "ECR will be removed; exact image digests and source commit in deployment-20261103.json; historical external Docker backup unaffected",
+  "remaining_managed": [],
+  "snapshot_status": "available",
+  "previous_failed_run": 41773851972,
+  "cleanup_fix_commit": "e23f77b2c1acfac6c060d2edb0c23a4743fc61b0",
+  "managed_state_count": 0,
+  "total_workload_removed": 76,
+  "verification": {
+    "eks": [],
+    "rds_instances": [],
+    "project_vpc": [],
+    "project_eips": [],
+    "alb": [],
+    "codebuild_projects": [],
+    "workload_iam_roles": [],
+    "snapshot": "available"
+  }
+}

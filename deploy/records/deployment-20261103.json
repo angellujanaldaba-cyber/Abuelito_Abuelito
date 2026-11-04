@@ -1,6 +1,6 @@
 {
   "date": "2026-11-03",
-  "status": "pipeline_success; manual DNS and functional acceptance pending",
+  "status": "pipeline_success; user manually validated create and view order via HTTPS domain",
   "authorization": "User authorized real AWS deployment and charges in chat; chose manual Cloudflare CNAME update",
   "commit": "966140acb0f646eec6a8ccef36c2641c0ff8d7a0",
   "run_id": 41765441114,
@@ -21,7 +21,7 @@
     "nat_gateways": 2
   },
   "validation": "preflight, application CI, Terraform CI and plan succeeded",
-  "dns": "manual user update after deployment; publish_dns=false",
+  "dns": "User updated DNS; HTTPS domain serving order confirmed by screenshot",
   "functional_acceptance": "pending user; no orders created",
   "admin_cidr": "177.245.179.107/32",
   "previous_attempt": {
@@ -51,7 +51,7 @@
       "prisma/schema.prisma": "394dd9d67c607e45be1f9098d66458bb8188865ad27a5cccde7e5c4f4015aeb0"
     },
     "deployment_status": "ready",
-    "functional_acceptance": "pending_user",
+    "functional_acceptance": "user confirmed create/view order 1 via screenshot 2026-11-03 America/Mexico_City",
     "environment": "dev",
     "migration_job": "abuelito-migrate-41765441114-2",
     "alb_targets": "healthy",
@@ -92,5 +92,14 @@
     "functional_acceptance": "pending_user"
   },
   "attempt": 2,
-  "runtime_validation": "creation, build, database bootstrap, migrations, rollout, target health passed after documented fixes; destroy not tested"
+  "runtime_validation": "creation, build, database bootstrap, migrations, rollout, target health passed after documented fixes; destroy not tested",
+  "manual_acceptance": {
+    "date": "2026-11-03",
+    "url": "https://dev.miguelinfra.com/pedido/1",
+    "evidence": "User screenshot in chat; no customer details copied",
+    "create_order": true,
+    "view_order": true,
+    "restart_persistence": "not_tested",
+    "zone_failover": "not_tested"
+  }
 }

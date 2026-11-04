@@ -62,8 +62,8 @@ resource "aws_iam_role_policy" "pipeline" {
         StringEquals = { "ec2:AuthorizedService" = "codebuild.amazonaws.com" }, ArnEquals = { "ec2:Subnet" = [for s in aws_subnet.private : s.arn] }
       } }
       ], each.key == "bootstrap" ? [
-      { Effect = "Allow", Action = ["rds:DescribeDBInstances"], Resource = aws_db_instance.app.arn },
-      { Effect = "Allow", Action = ["secretsmanager:GetSecretValue"], Resource = aws_db_instance.app.master_user_secret[0].secret_arn }
+      { Effect = "Allow", Action = ["rds:DescribeDBInstances"], Resource = aws_db_instance.app.arn, Condition = { StringEquals = { "aws:RequestedRegion" = "us-east-1" } } },
+      { Effect = "Allow", Action = ["secretsmanager:GetSecretValue"], Resource = aws_db_instance.app.master_user_secret[0].secret_arn, Condition = { StringEquals = { "aws:RequestedRegion" = "us-east-1" } } }
       ] : [
       { Effect = "Allow", Action = ["elasticloadbalancing:DescribeTargetHealth"], Resource = "*", Condition = { StringEquals = { "aws:RequestedRegion" = "us-east-1" } } }
     ])
